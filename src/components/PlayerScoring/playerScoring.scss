@@ -1,0 +1,16 @@
+.player-scoring-category-container {
+  background: var(--dualpadel-white);
+  border-radius: var(--dualpadel-radius-4);
+  margin: 1.5px 3px;
+  padding: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:nth-child(1) {
+    margin-top: 3px;
+  }
+  &:nth-last-child(1) {
+    margin-bottom: 3px;
+  }
+}

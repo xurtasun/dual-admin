@@ -1,0 +1,11 @@
+.playerDetail-container {
+  animation: fadein 1s backwards;
+}
+@keyframes fadein {
+  from {
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
+}

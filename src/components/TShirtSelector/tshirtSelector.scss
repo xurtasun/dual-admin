@@ -1,0 +1,19 @@
+.tshirt-selector-size {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dualpadel-gray);
+    background: var(--dualpadel-white);
+    margin: 4px 2px;
+    border-radius: var(--dualpadel-radius-4);
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  &:nth-child(1) {
+    margin-left: 4px;
+  }
+  &:nth-last-child(1) {
+    margin-right: 4px;
+  }
+}

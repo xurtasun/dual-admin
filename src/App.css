@@ -1,0 +1,37 @@
+:root {
+  --background-color: #F6F5F5;
+  --dualpadel-color: #192D4D;
+  --dualpadel-white: #fff;
+  --dualpadel-gray: #BDBDBD;
+  --dualpadel-light-gray: #ededed;
+  --dualpadel-filter-gray: invert(76%) sepia(0%) saturate(0%) hue-rotate(187deg) brightness(94%) contrast(110%);
+  --dualpadel-filter-blue: invert(16%) sepia(68%) saturate(495%) hue-rotate(177deg) brightness(90%) contrast(99%);
+  --dualpadel-radius-15: 15px;
+  --dualpadel-radius-4: 4px;
+  --dualpadel-padding-18: 18px;
+  --dualpadel-filter-drop-shadow: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.15));
+  --dualpadel-font-family: 'Archivo', sans-serif;
+
+  
+  background-color: var(--background-color);
+  font-family: var(--dualpadel-font-family);
+}
+
+input:focus {
+  outline: none !important;
+}
+
+body {
+  margin: 0
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

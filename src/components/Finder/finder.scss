@@ -1,0 +1,8 @@
+.finder-container {
+  input:focus {
+    outline: none !important;
+  }
+  input::placeholder {
+    color: var(--dualpadel-gray);
+  }
+}
