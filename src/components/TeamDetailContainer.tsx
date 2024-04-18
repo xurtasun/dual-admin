@@ -6,13 +6,14 @@ import { GrayContainer } from './GrayContainer'
 import { CloseIcon } from './Icons/CloseIcon'
 import { DeleteIcon } from './Icons/DelteIcon'
 import { EditIcon } from './Icons/EditIcon'
-import { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import { Selector } from './Selector/Selector'
 import { ICategory } from '../types.d/category'
 import { SaveIcon } from './Icons/SaveIcon'
 import { SelectChangeEvent } from '@mui/material/Select'
 import { useManagementTeamsStore } from '../store/managementTeams'
 import { IRestriction } from '../types.d/restriction'
+import { AutocompleteComponent } from './Autocomplete/Autocomplete'
 
 interface Props {
   team: ITeam
@@ -57,13 +58,19 @@ const styles: Styles = {
 
 const AVATAR_SIZE = 60
 export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categories }: Props) => {
+  const players = useManagementTeamsStore((state) => state.players)
+  const playersSearched = useManagementTeamsStore((state) => state.playersSearched)
+
   const [editMode, setEditMode] = useState(false)
   const updateTeam = useManagementTeamsStore(state => state.updateTeam)
+  const searchPlayers = useManagementTeamsStore(state => state.searchPlayers)
   const updateTeamRestrictions = useManagementTeamsStore(state => state.updateTeamRestrictions)
   const getCategoryNameById = (id: string, placeholder: string) => {
     const category = categories.find((category) => category._id === id)
     return category?.parent?.name || placeholder
   }
+
+  const [playersIndexSearched, setPlayersIndexSearched] = useState<number[]>([])
   const getCategoryById = (id: string) => {
     const category = categories.find((category) => category._id === id)
     if (!category) return null
@@ -82,17 +89,69 @@ export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categor
   const handleUpdateRestrictions = (restrictions: IRestriction[]) => {
     updateTeamRestrictions(restrictions)
   }
+  const getPlayerNameFromId = (id: string | number | readonly string[]) => {
+    const player = players.find((player) => player._id === id)
+    return player ? `${player.name} ${player.lastName}` : id
+  }
+  const getPlayerFromId = (id: string) => {
+    const player = players.find((player) => player._id === id)
+    return player
+  }
+  const handleChangePlayer = (_event: SyntheticEvent<Element, Event>, value: string | null, oldValue: string) => {
+    console.log('handleChangePlayer')
+    const playersTeamIdToUpdate = team.players.map((player) => {
+      console.log(player._id, value)
+      if (value === null || value === '') return player
+      if (player._id === oldValue) {
+        return getPlayerFromId(value) || player
+      }
+      return player
+    })
+    setTeamToManage({ ...team, players: playersTeamIdToUpdate })
+    console.log(playersTeamIdToUpdate)
+  }
+  const handleSearchPlayers = (value: string, index: number) => {
+    console.log('handleSearchPlayers')
+    const needToSearch = players.map((player) => `${player.name} ${player.lastName}`).includes(value)
+    if (!needToSearch && value.length > 3) {
+      searchPlayers(value)
+      setPlayersIndexSearched([...playersIndexSearched, index])
+    }
+    console.log(playersIndexSearched, playersSearched)
+  }
   return (
     <div className='container' style={styles.container}>
-      <div className='playersHeader' style={styles.playersHeader}>
+      <div className='playersHeader' style={editMode ? { ...styles.playersHeader, gap: 30 } : styles.playersHeader}>
         {
-        team.players.map((player) => {
+        team.players.map((player, index) => {
+          console.log(playersIndexSearched, index, playersIndexSearched.includes(index))
           return (
             <div className='player' key={player._id} style={styles.playerHeader}>
-              <Avatar {...stringAvatar({ name: `${player.name} ${player.lastName}`, size: AVATAR_SIZE })} />
-              <div className='playerName'>
-                {player.name} {player.lastName}
-              </div>
+              {
+                editMode
+                  ? <>
+                    <AutocompleteComponent
+                      label='Jugador'
+                      options={playersIndexSearched.includes(index) ? playersSearched.map((player) => player._id) : players.map((player) => player._id)}
+                      value={player._id}
+                      onChange={handleChangePlayer}
+                      onInputChange={(_event: SyntheticEvent<Element, Event>, value: string) => handleSearchPlayers(value, index)}
+                      placeholder='Jugador'
+                      disabled
+                      error={false}
+                      helperText=''
+                      index={index}
+                      getTextFromId={getPlayerNameFromId}
+                    />
+                  </>
+                  : <>
+                    <Avatar {...stringAvatar({ name: `${player.name} ${player.lastName}`, size: AVATAR_SIZE })} />
+                    <div className='playerName'>
+                      {player.name} {player.lastName}
+                    </div>
+                  </>
+              }
+
             </div>
           )
         })

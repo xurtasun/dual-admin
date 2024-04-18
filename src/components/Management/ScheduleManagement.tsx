@@ -78,13 +78,13 @@ export const ScheduleManagement = ({ tournamentId }: Props) => {
     console.log(dayTabSelectedSchedule)
   }, [dayTabSelectedSchedule])
 
-  if (!tournament || !dayTabSelectedSchedule || !matches) return null
+  if (!tournament || !matches) return null
   return (
     <GrayContainer>
       <div className='ScheduleContainer' style={styles.scheduleContainer}>
         <TabSelector direction='column' tabs={tournament.date.map((dat) => new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }))} onClick={handleChangeTabDaySelector} selected={dayTabSelectedSchedule?.name} itemStyle={{ padding: '14px 0px' }} />
         <div className='headerContainer' style={styles.headerContainer}>
-          <Schedule courts={[...Array(tournament.courtNumber)]} date={dayTabSelectedSchedule.date} matches={matches} refreshData={handleGetMatchesByTournamentDate} />
+          {dayTabSelectedSchedule && <Schedule courts={[...Array(tournament.courtNumber)]} date={dayTabSelectedSchedule.date} matches={matches} refreshData={handleGetMatchesByTournamentDate} />}
         </div>
       </div>
     </GrayContainer>

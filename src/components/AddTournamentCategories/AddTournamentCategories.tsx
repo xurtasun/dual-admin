@@ -114,6 +114,11 @@ export const AddTournamentCategories = () => {
     removeCategory(category)
   }
 
+  const getCategoryParentNameFromId = (id: string) => {
+    const categoryParent = categoriesParent.find((category) => category.id === id)
+    return categoryParent?.name || 'None'
+  }
+
   return (
     <div className='container' style={styles.container}>
       <div className='header' style={styles.header}>
@@ -124,7 +129,7 @@ export const AddTournamentCategories = () => {
         {
           newCategory && (
             <div className='category' style={styles.category} key='new_category'>
-              <Selector options={categoriesParent} onChange={handleOnChangeAddCategory} value={newCategory.parent || ''} />
+              <Selector options={categoriesParent} onChange={handleOnChangeAddCategory} value={newCategory.parent || ''} getValueFromId={getCategoryParentNameFromId} />
               <div className='teamsLimit' style={styles.categoryTeams}>
                 <PersonConfiguredIcon styles={{ fontSize: 30 }} />
                 <Input styles={{ width: 20, borderRadius: 10 }} type='number' defaultValue={newCategory.teamsLimit} onChange={handleOnChangeTeamLimitNewCategory} />

@@ -3,7 +3,7 @@ import { useAuthStore } from '../store/auth'
 
 const baseURL =
   process.env.NODE_ENV === 'production'
-    ? process.env.HTTP_BASE_URL
+    ? 'https://api.dualpadel.com'
     : 'http://localhost:3000'
 
 const authApi = axios.create({

@@ -95,6 +95,7 @@ export const PlayersPage = ({ isTablet, isMobile }: Props) => {
   }
 
   useEffect(() => {
+    console.log(playerFilter)
     getPlayers({ filter: playerFilter })
   }, [playerFilter, getPlayers, playersPage, playerFilterValue])
   return (

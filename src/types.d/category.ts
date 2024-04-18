@@ -1,13 +1,13 @@
 import { ICategoryParent } from './categoryParent'
 import { ITeam } from './team'
-import { ITournament } from './tournament'
 
 export interface ICategory {
   _id: string
   name?: string
   teams?: ITeam[]
   groups?: string[]
-  tournament?: ITournament
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tournament?: any
   matches?: string[]
   created?: Date
   teamsLimit?: number

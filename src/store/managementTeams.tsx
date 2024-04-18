@@ -3,16 +3,22 @@ import { ITeam } from '../types.d/team'
 import { getTeamsByTournamentAndCategory, updateTeamPayment, deleteTeam, updateTeam, updateTeamRestrictions } from '../services/teams'
 import { toast } from 'sonner'
 import { IRestriction } from '../types.d/restriction'
+import { IPlayer } from '../types.d/player'
+import { getPlayers } from '../services/player'
 
 interface ManagementTeamsState {
   teamToManage: ITeam | null
   teams: ITeam[]
+  players: IPlayer[]
   teamsLoading: boolean
   tournamentId: string | null
   categoryId: string | null
   playersNumber: number
   playersPayedNumber: number
   playersPendingNumber: number
+  playersTeamIdToUpdate: string[]
+  playersSearched: IPlayer[]
+  searchPlayers: (value: string) => void
   setTournamentId: (tournamentId: string) => void
   setCategoryId: (categoryId: string) => void
   setTeamToManage: (team: ITeam | null) => void
@@ -28,12 +34,15 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
   return {
     teamToManage: null,
     teams: [],
+    players: [],
+    playersSearched: [],
     teamsLoading: true,
     tournamentId: null,
     categoryId: null,
     playersNumber: 0,
     playersPayedNumber: 0,
     playersPendingNumber: 0,
+    playersTeamIdToUpdate: [],
     setTournamentId: (tournamentId: string) => {
       set({ tournamentId })
     },
@@ -53,6 +62,26 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
         .catch((error) => {
           console.log(error)
           toast.error('Error al actualizar el equipo')
+        })
+    },
+    searchPlayers: (value: string) => {
+      console.log('Searching players ', value)
+      const searchFilter = {
+        $and: value.split(' ').map((word: string) => ({
+          $or: [
+            { name: { $regex: word, $options: 'i' } },
+            { lastName: { $regex: word, $options: 'i' } }
+          ]
+        }))
+      }
+      getPlayers({ page: 0, filter: searchFilter })
+        .then(({ data }) => {
+          console.log(data)
+          set({ playersSearched: data.docs })
+        })
+        .catch((error) => {
+          console.log(error)
+          toast.error('Error al buscar jugadores')
         })
     },
     updateTeamRestrictions: (restrictions: IRestriction[]) => {
@@ -90,6 +119,7 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
         .then(({ data }) => {
           set({ teams: data })
           set({ teamsLoading: false })
+          set({ players: data.map((team: ITeam) => team.players).flat() })
           _get().getNumbers()
         })
     },

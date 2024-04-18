@@ -26,7 +26,9 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => {
       set({ newCategory: category })
     },
     createCategory: (category: ICategory) => {
-      createCategory({ ...category, tournament: get().tournamentId })
+      const tournamentId = get().tournamentId
+      if (!tournamentId) return toast.error('No se ha seleccionado un torneo')
+      createCategory({ ...category, tournament: tournamentId })
         .then(_ => {
           toast.success('Categoria creada')
           get().getCategoriesByTournamentId()

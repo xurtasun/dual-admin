@@ -32,6 +32,8 @@ interface PlayerState {
   playerDetailFormErrors: FormInputsErrors
   playerFilterValue: string
   playerFilter: any
+  updateTeamPlayers: IPlayer[]
+  setUpdateTeamPlayers: (players: IPlayer[]) => void
   setPlayerFilter: (filter: any) => void
   setPlayerFilterValue: (value: string) => void
   setPlayerDetail: (player: IPlayer | null) => void
@@ -57,6 +59,10 @@ export const usePlayersStore = create<PlayerState>((set, _get) => {
     playerDetailFormErrors: {},
     playerFilterValue: '',
     playerFilter: {},
+    updateTeamPlayers: [],
+    setUpdateTeamPlayers: (players: IPlayer[]) => {
+      set({ updateTeamPlayers: players })
+    },
     deletePlayer: () => {
       const { id } = _get().playerDetail as IPlayer
       deletePlayer(id)

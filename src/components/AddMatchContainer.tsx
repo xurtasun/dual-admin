@@ -193,7 +193,11 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
     if (value !== '') {
       setMatchFormErrors({ ...matchFormErrors, courtName: null })
     }
-    setMatch({ match: { ...match, courtName: `${courtNameDefault} ${e.target.value}` } })
+    if (editMode) {
+      setMatch({ match: { ...match, courtName: e.target.value } })
+    } else {
+      setMatch({ match: { ...match, courtName: `${courtNameDefault} ${e.target.value}` } })
+    }
   }
   const handleCreateMatch = () => {
     if (!match.courtName || match?.courtName === '') {
