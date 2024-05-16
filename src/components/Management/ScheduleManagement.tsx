@@ -7,7 +7,7 @@ import { Schedule } from '../Schedule'
 
 interface Props {
   tournamentId: string
-
+  isMobile?: boolean
 }
 interface Styles {
   scheduleContainer: React.CSSProperties
@@ -17,13 +17,13 @@ interface Styles {
 const styles: Styles = {
   scheduleContainer: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    gap: 50,
+    gap: 30,
     borderRadius: 'var(--dualpadel-radius-15)',
     background: 'white',
-    padding: 30
+    padding: '30px 50px'
   },
   headerContainer: {
     display: 'flex',
@@ -33,7 +33,7 @@ const styles: Styles = {
   }
 
 }
-export const ScheduleManagement = ({ tournamentId }: Props) => {
+export const ScheduleManagement = ({ tournamentId, isMobile }: Props) => {
   const tournament = useManagementStore((state) => state.tournament)
   const setTournamentId = useManagementScheduleStore((state) => state.setTournamentId)
   const getMatchesByTournamentDate = useManagementScheduleStore((state) => state.getMatchesByTournamentDate)
@@ -82,9 +82,9 @@ export const ScheduleManagement = ({ tournamentId }: Props) => {
   return (
     <GrayContainer>
       <div className='ScheduleContainer' style={styles.scheduleContainer}>
-        <TabSelector direction='column' tabs={tournament.date.map((dat) => new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }))} onClick={handleChangeTabDaySelector} selected={dayTabSelectedSchedule?.name} itemStyle={{ padding: '14px 0px' }} />
+        <TabSelector direction='row' tabs={tournament.date.map((dat) => new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }))} onClick={handleChangeTabDaySelector} selected={dayTabSelectedSchedule?.name} itemStyle={{ padding: '14px' }} />
         <div className='headerContainer' style={styles.headerContainer}>
-          {dayTabSelectedSchedule && <Schedule courts={[...Array(tournament.courtNumber)]} date={dayTabSelectedSchedule.date} matches={matches} refreshData={handleGetMatchesByTournamentDate} />}
+          {dayTabSelectedSchedule && <Schedule isMobile={isMobile} courts={[...Array(tournament.courtNumber)]} date={dayTabSelectedSchedule.date} matches={matches} refreshData={handleGetMatchesByTournamentDate} />}
         </div>
       </div>
     </GrayContainer>

@@ -30,7 +30,8 @@ const styles: Styles = {
     borderRadius: 'var(--dualpadel-radius-15)',
     filter: 'var(--dualpadel-filter-drop-shadow)',
     padding: 28,
-    margin: 2
+    margin: 2,
+    position: 'relative'
   },
   info: {
     display: 'flex',

@@ -46,6 +46,8 @@ export const useAddTournament = create<AddTournamentState>((set, get) => {
       const currentTournament = { ...get().tournament, ...tournament }
       set({ tournament: currentTournament })
 
+      console.log(currentTournament)
+
       createTournament(currentTournament as ITournament)
         .then(({ data }) => {
           const tournament = data

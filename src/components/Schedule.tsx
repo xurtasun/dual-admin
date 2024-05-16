@@ -6,6 +6,7 @@ interface Props {
   date: Date
   matches: IMatch[]
   refreshData: () => void
+  isMobile?: boolean
 }
 interface Styles {
   courtHeader: React.CSSProperties
@@ -43,19 +44,20 @@ const styles: Styles = {
     padding: 12
   }
 }
-export const Schedule = ({ courts, matches, refreshData }: Props) => {
+export const Schedule = ({ courts, matches, refreshData, isMobile }: Props) => {
   if (matches.length === 0) return null
   return (
     <>
       {
         courts.map((_, courtIndex) => {
+          const courtHeaderStyles = isMobile ? { ...styles.courtHeader, minWidth: 104 } : styles.courtHeader
           return (
             <div className='courtContainer' key={courtIndex} style={{ marginBottom: 152 }}>
-              <div className='courtHeader' style={courtIndex === 0 ? { ...styles.courtHeader, ...styles.firstCourtHeader } : courtIndex === courts.length - 1 ? { ...styles.courtHeader, ...styles.lastCourtHeader } : { ...styles.courtHeader }}>
+              <div className='courtHeader' style={courtIndex === 0 ? { ...courtHeaderStyles, ...styles.firstCourtHeader } : courtIndex === courts.length - 1 ? { ...courtHeaderStyles, ...styles.lastCourtHeader } : { ...courtHeaderStyles }}>
                 {`Pista ${courtIndex + 1}`}
               </div>
               <div className='scheduleTimeTable'>
-                <ScheduleTimeTable matches={matches} courtIndex={courtIndex} refreshData={refreshData} />
+                <ScheduleTimeTable isMobile={isMobile} matches={matches} courtIndex={courtIndex} refreshData={refreshData} />
               </div>
 
             </div>

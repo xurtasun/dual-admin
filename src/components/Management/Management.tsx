@@ -26,7 +26,8 @@ const styles: Styles = {
     borderRadius: 'var(--dualpadel-radius-15)',
     filter: 'var(--dualpadel-filter-drop-shadow)',
     padding: 28,
-    margin: 2
+    margin: 2,
+    marginRight: 25
   },
   flexRow: {
     display: 'flex',
@@ -46,8 +47,9 @@ const styles: Styles = {
 interface Props {
   categories: ICategory[]
   tournamentId: string
+  isMobile?: boolean
 }
-export const Management = ({ categories, tournamentId }: Props) => {
+export const Management = ({ categories, tournamentId, isMobile }: Props) => {
   const tabsTitle = ['Inscritos', 'Grupos', 'Partidos', 'Cuadro', 'Tablero']
 
   const tabSelected = useManagementStore((state) => state.tabSelected)
@@ -119,7 +121,7 @@ export const Management = ({ categories, tournamentId }: Props) => {
           {tabSelected === tabsTitle[1] && <GroupsManagement tournamentId={tournamentId} categoryId={categorySelected} />}
           {tabSelected === tabsTitle[2] && <MatchesManagement tournamentId={tournamentId} categoryId={categorySelected} />}
           {tabSelected === tabsTitle[3] && <DrawManagement tournamentId={tournamentId} categoryId={categorySelected} />}
-          {tabSelected === tabsTitle[4] && <ScheduleManagement tournamentId={tournamentId} />}
+          {tabSelected === tabsTitle[4] && <ScheduleManagement isMobile={isMobile} tournamentId={tournamentId} />}
         </div>
       </div>
     </div>

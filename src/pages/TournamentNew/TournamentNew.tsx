@@ -16,10 +16,12 @@ import { DateRangePickerComponent } from '../../components/DateRangePicker/DateR
 import { TimeRangePickerComponent } from '../../components/TimeRangePicker/TimeRangePicker'
 import { PrincipalButton } from '../../components/PrincipalButton'
 import { useAddTournament } from '../../store/addTournament'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AddTournamentCategories } from '../../components/AddTournamentCategories/AddTournamentCategories'
 import { AddIcon } from '../../components/Icons/AddIcon'
 import { CloseIcon } from '../../components/Icons/CloseIcon'
+import { ToggleOn } from '../../components/Icons/ToggleOn'
+import { ToggleOff } from '../../components/Icons/ToggleOff'
 
 interface Styles {
   page: React.CSSProperties
@@ -187,6 +189,8 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
   const imageFile = useAddTournament(state => state.imageFile)
   const imageFilePreview = useAddTournament(state => state.imageFilePreview)
 
+  const [isMaster, setIsMaster] = useState(false)
+
   const handleSaveTournament = (e: React.FormEvent<HTMLFormElement>) => {
     console.log('save tournament')
     e.preventDefault()
@@ -202,10 +206,11 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
       pricing: {
         one: Number(formData.get('pricing_1cat')),
         two: Number(formData.get('pricing_2cat'))
-      }
+      },
+      matchTime: Number(formData.get('matchTime')),
+      isMaster
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
-
     console.log(tournament, categoriesToCreate)
 
     saveTournament(tournament)
@@ -233,6 +238,7 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
     setTournament({ date: getDates(dates[0], dates[1]) })
   }
   const handleTimeChange = (dates: Date[]) => {
+    console.log(dates[0].toLocaleTimeString('es-ES'), dates[1].toLocaleTimeString('es-ES'))
     setTournament({ time: [dates[0].toLocaleTimeString('es-ES'), dates[1].toLocaleTimeString('es-ES')] })
   }
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -279,31 +285,31 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
                   </div>
                   <div className='tournament-data' style={styles.data}>
                     <div className='tournament-location' style={{ ...styles.data }}>
-                      <LocationIcon styles={{ color: 'var(--duapadel-color)' }} />
+                      <LocationIcon styles={{ color: 'var(--dualpadel-color)' }} />
                       <Input placeholder='Dirección' styles={styles.input} name='address' />
                     </div>
                   </div>
                   <div className='tournament-data' style={styles.data}>
                     <div className='tournament-clubName' style={{ ...styles.data }}>
-                      <HomeIcon styles={{ color: 'var(--duapadel-color)' }} />
+                      <HomeIcon styles={{ color: 'var(--dualpadel-color)' }} />
                       <Input placeholder='Nombre del club' styles={styles.input} name='clubName' />
                     </div>
                   </div>
                   <div className='tournament-data' style={styles.data}>
                     <div className='tournament-calendar' style={{ ...styles.data }}>
-                      <CalendarIcon styles={{ color: 'var(--duapadel-color)' }} />
+                      <CalendarIcon styles={{ color: 'var(--dualpadel-color)' }} />
                       <DateRangePickerComponent placeholder='Selecciona la fecha del torneo' name='date' onChange={handleDateChange} />
                     </div>
                   </div>
                   <div className='tournament-data' style={styles.data}>
                     <div className='tournament-schedule' style={{ ...styles.data }}>
-                      <ScheduleIcon styles={{ color: 'var(--duapadel-color)' }} />
+                      <ScheduleIcon styles={{ color: 'var(--dualpadel-color)' }} />
                       <TimeRangePickerComponent placeholder='Selecciona el horario del torneo' name='time' onChange={handleTimeChange} />
                     </div>
                   </div>
                   <div className='tournament-data' style={styles.data}>
                     <div className='tournament-location' style={{ ...styles.data }}>
-                      <GroupIcon styles={{ color: 'var(--duapadel-color)' }} />
+                      <GroupIcon styles={{ color: 'var(--dualpadel-color)' }} />
                       <Input placeholder='Límite parejas' styles={styles.input} name='teamsTarget' type='number' />
                     </div>
                   </div>
@@ -349,6 +355,30 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
                           <Input placeholder='€ 2 Cat.' styles={styles.input_inline} name='pricing_2cat' type='number' />
                         </div>
                       </div>
+                    </div>
+                  </div>
+                  <div className='tournament-data' style={styles.data}>
+                    <div className='tournament-match-duration' style={{ ...styles.data }}>
+                      <ScheduleIcon styles={{ color: 'var(--dualpadel-color)' }} />
+                      <Input placeholder='Duración Partido' styles={styles.input_inline} name='matchTime' type='number' />
+                    </div>
+                    <div className='tournament-match-duration' style={{ ...styles.data }}>
+                      {
+                        isMaster
+                          ? <>
+                            <ToggleOn styles={{ color: 'var(--dualpadel-color)', fontSize: 30 }} onClick={() => setIsMaster(false)} />
+                            <div className='text' style={{ fontSize: 14 }}>
+                              Master
+                            </div>
+                          </>
+                          : <>
+                            <ToggleOff styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} onClick={() => setIsMaster(true)} />
+                            <div className='text' style={{ fontSize: 14 }}>
+                              Open
+                            </div>
+                          </>
+                      }
+
                     </div>
                   </div>
                 </div>

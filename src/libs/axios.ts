@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/auth'
 const baseURL =
   process.env.NODE_ENV === 'production'
     ? 'https://api.dualpadel.com'
-    : 'http://localhost:3000'
+    : 'http://localhost:3002'
 
 const authApi = axios.create({
   baseURL,
@@ -26,6 +26,7 @@ authApi.interceptors.response.use(response => {
 },
 async error => {
   if (error?.response?.status === 401) {
+    useAuthStore.getState().logout()
     window.location.href = '/login'
   }
 }

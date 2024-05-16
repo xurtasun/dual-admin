@@ -60,7 +60,10 @@ export const GroupsManagement = ({ tournamentId, categoryId }: Props) => {
   }
   return (
 
-    <GrayContainer style={{ minWidth: 600, position: 'relative', flexDirection: 'row', alignItems: 'flex-start' }}>
+    <GrayContainer style={{ minWidth: 600, position: 'relative', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {
+        !group && <AddButton text='Añadir grupo' onClick={handleAddGroup} style={{ width: 150, marginBottom: 20 }} />
+      }
       <div className='flexRow' style={styles.flexRow}>
         <div className='groups' style={{ ...styles.flexRow, justifyContent: 'flex-start' }}>
           {
@@ -71,13 +74,10 @@ export const GroupsManagement = ({ tournamentId, categoryId }: Props) => {
             })
           }
         </div>
-        <div className='groups' style={{ ...styles.flexRow, justifyContent: 'flex-start', marginLeft: 20 }}>
+        <div className='groups' style={{ ...styles.flexRow, justifyContent: 'flex-start' }}>
           {group && <AddGroupContainer group={group} editMode teams={teamsSelector} />}
         </div>
       </div>
-      {
-        !group && <AddButton text='Añadir grupo' onClick={handleAddGroup} style={{ width: 150 }} />
-      }
 
     </GrayContainer>
   )

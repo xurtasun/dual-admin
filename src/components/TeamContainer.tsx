@@ -5,6 +5,7 @@ import Checkbox from '@mui/material/Checkbox'
 import { TShirtIcon } from './Icons/ShirtIcon'
 import { ImageIcon } from './Icons/ImageIcon'
 import { Tooltip } from '@mui/material'
+import { useEffect, useState } from 'react'
 
 interface Styles {
   team_container: React.CSSProperties
@@ -15,6 +16,7 @@ interface Styles {
   team_player_price: React.CSSProperties
   checkbox: React.CSSProperties
   team_player_tshirt: React.CSSProperties
+  payed: React.CSSProperties
 }
 const styles: Styles = {
   players_container: {
@@ -72,6 +74,10 @@ const styles: Styles = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     width: 50
+  },
+  payed: {
+    backgroundColor: '#92ed1b26',
+    border: '3px solid #92ed1b2e'
   }
 }
 interface Props {
@@ -84,8 +90,16 @@ interface Props {
 }
 const AVATAR_SIZE = 30
 export const TeamContainer = ({ team, children, showPayment, enableManagement, handlePayment, style }: Props) => {
+  const [teamPayed, setTeamPayed] = useState(false)
+
+  useEffect(() => {
+    const playersIds = team.players.map(player => player._id)
+    const allPaid = playersIds.every(playerId => team.payed.includes(playerId))
+    setTeamPayed(allPaid)
+  }, [team])
+
   return (
-    <div className='team-container' style={{ ...styles.team_container, ...style }} key={team._id}>
+    <div className='team-container' style={teamPayed ? { ...styles.team_container, ...styles.payed, ...style } : { ...styles.team_container, ...style }} key={team._id}>
       <Tooltip title={team._id} placement='top'>
         <div className='players-container' style={styles.players_container}>
           {

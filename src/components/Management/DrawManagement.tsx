@@ -38,7 +38,7 @@ const styles: Styles = {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    gap: 100,
+    gap: 50,
     width: '100%',
     background: 'var(--dualpadel-white)',
     borderRadius: 'var(--dualpadel-radius-15)',
@@ -97,6 +97,17 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
     getTeamsByTournamentAndCategory()
   }, [tournamentId, categoryId, setTournamentId, setCategoryId, getFinalMatchesByTournamentAndCategory, getTeamsByTournamentAndCategory])
 
+  const translateMatchType = (matchType: string) => {
+    switch (matchType) {
+      case 'Eighth':
+        return 'Octavos'
+      case 'Fourth':
+        return 'Cuartos'
+      default:
+        return matchType
+    }
+  }
+
   const sortMatchTypes = (a: string, b: string) => {
     if (a === 'Final') {
       return 1
@@ -128,7 +139,10 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
     return <Loader />
   }
   return (
-    <GrayContainer>
+    <GrayContainer style={{ minWidth: 600, position: 'relative', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {
+        !match && <AddButton text='Añadir partido' onClick={() => setMatch({ match: newMatch })} style={{ width: 160, marginBottom: 20 }} />
+      }
       <div className='flexRow' style={styles.flexRow}>
         <div className='drawContainer' style={styles.drawContainer}>
           {
@@ -136,7 +150,8 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
               return (
                 <div className='finalType' style={styles.finalType} key={key}>
                   <div className='finalTypeTitle' style={styles.finalTypeTitle}>
-                    {key}
+                    {translateMatchType(key)}
+
                   </div>
                   {
                     finalMatches[key].map((match, matchIndex) => {
@@ -167,9 +182,7 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
             })
           }
         </div>
-        {
-          !match && <AddButton text='Añadir partido' onClick={() => setMatch({ match: newMatch })} style={{ width: 160 }} />
-        }
+
         {
           match &&
             <Modal open={!!match}>

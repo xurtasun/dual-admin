@@ -65,7 +65,10 @@ export const MatchesManagement = ({ tournamentId, categoryId }: Props) => {
     return <Loader />
   }
   return (
-    <GrayContainer>
+    <GrayContainer style={{ minWidth: 600, position: 'relative', flexDirection: 'column', alignItems: 'flex-start' }}>
+      {
+        !match && <AddButton text='Añadir partido' onClick={() => setMatch({ match: newMatch })} style={{ width: 160, marginBottom: 20 }} />
+      }
       <div className='flexRow' style={styles.flexRow}>
         <div className='groups' style={{ ...styles.flexRow, justifyContent: 'flex-start' }}>
           {
@@ -76,9 +79,6 @@ export const MatchesManagement = ({ tournamentId, categoryId }: Props) => {
             })
           }
         </div>
-        {
-          !match && <AddButton text='Añadir partido' onClick={() => setMatch({ match: newMatch })} style={{ width: 160 }} />
-        }
         {
           match &&
             <Modal open={!!match}>

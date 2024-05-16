@@ -6,6 +6,7 @@ interface Props {
   match?: IMatch
   stylesInput?: React.CSSProperties
   refreshData?: () => void
+  isMobile?: boolean
 }
 interface Styles {
   matchScheduleContainer: React.CSSProperties
@@ -102,7 +103,7 @@ const styles: Styles = {
     borderColor: '#92ed1b2e'
   }
 }
-export const MatchScheduleContainer = ({ match, stylesInput, refreshData }: Props) => {
+export const MatchScheduleContainer = ({ match, stylesInput, refreshData, isMobile }: Props) => {
   const teamsInMatch = 2
   const tournament = useManagementStore((state) => state.tournament)
   const updateMatch = useManagementMatchesStore((state) => state.updateMatch)
@@ -125,6 +126,7 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData }: Prop
         <div className='matchTeams' style={styles.matchTeams}>
           {
             [...Array(teamsInMatch).keys()].map((index) => {
+              const matchPlayerStyles = isMobile ? { ...styles.matchPlayer, width: 120 } : styles.matchPlayer
               return (
                 <div className='matchTeam' key={`${index}`}>
                   {
@@ -132,7 +134,7 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData }: Prop
                       ? (
                         <div className='matchPlayers' style={match.winner ? match.winner === match.teams[index]._id ? { ...styles.matchPlayers, ...styles.teamWinner } : { ...styles.matchPlayers, ...styles.teamLoser } : styles.matchPlayers}>
                           {match.teams[index].players.map(player => (
-                            <div className='matchPlayer' key={player._id} style={styles.matchPlayer}>
+                            <div className='matchPlayer' key={player._id} style={matchPlayerStyles}>
                               <span>{player.name} {player.lastName}</span>
                             </div>
                           ))}
@@ -140,10 +142,10 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData }: Prop
                         )
                       : (
                         <div className='matchPlayers' style={styles.matchPlayers}>
-                          <div className='matchPlayer' style={styles.matchPlayer}>
+                          <div className='matchPlayer' style={matchPlayerStyles}>
                             <span>{match.placeholders[index]}</span>
                           </div>
-                          <div className='matchPlayer' style={styles.matchPlayer}>
+                          <div className='matchPlayer' style={matchPlayerStyles}>
                             <span>{match.placeholders[index]}</span>
                           </div>
                         </div>

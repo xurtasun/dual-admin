@@ -7,6 +7,7 @@ interface Props {
   matches: IMatch[]
   courtIndex: number
   refreshData: () => void
+  isMobile?: boolean
 }
 interface Styles {
   timeTableSchedule: React.CSSProperties
@@ -33,7 +34,7 @@ const styles: Styles = {
     minHeight: 11.5
   }
 }
-export const ScheduleTimeTable = ({ matches, courtIndex, refreshData }: Props) => {
+export const ScheduleTimeTable = ({ matches, courtIndex, refreshData, isMobile }: Props) => {
   const [timeTable, setTimeTable] = useState<Date[]>([])
   const tournament = useManagementStore((state) => state.tournament)
   const get5minIntervalArray = (start: Date, end: Date) => {
@@ -57,6 +58,8 @@ export const ScheduleTimeTable = ({ matches, courtIndex, refreshData }: Props) =
           timeTable.map((time) => {
             const showTime = !!matches.find((match) => (new Date(match.datetime).getTime() === time.getTime()))
             const minHeight = ((152 / tournament.matchTime) * 4.9)
+            const matchesFOUND = matches.filter((match) => new Date(match.datetime).getTime() === time.getTime())
+            if (matchesFOUND && matchesFOUND.length > 7) console.log(matchesFOUND, time.toLocaleTimeString())
             return (
               <div className='timeRow' key={time.getTime()} style={{ ...styles.timeRow, minHeight }}>
                 {
@@ -65,7 +68,7 @@ export const ScheduleTimeTable = ({ matches, courtIndex, refreshData }: Props) =
                       {showTime && time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                 }
-                <MatchScheduleContainer match={matches.find((match) => (new Date(match.datetime).getTime() === time.getTime()) && (match.courtName.includes(String(courtIndex + 1))))} stylesInput={courtIndex !== 0 ? { left: -3, marginTop: -3 } : { marginTop: -3 }} refreshData={refreshData} />
+                <MatchScheduleContainer isMobile={isMobile} match={matches.find((match) => (new Date(match.datetime).getTime() === time.getTime()) && (match.courtName.includes(String(courtIndex + 1))))} stylesInput={courtIndex !== 0 ? { left: -3, marginTop: -3 } : { marginTop: -3 }} refreshData={refreshData} />
               </div>
             )
           })
