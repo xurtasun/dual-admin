@@ -115,7 +115,7 @@ export const Management = ({ categories, tournamentId, isMobile }: Props) => {
 
         </div>
         <div className='flex-row' style={{ ...styles.flexRow, alignItems: 'flex-start' }}>
-          {tabSelected !== tabsTitle[4] && <TabSelector direction='column' tabs={categoriesTabs} onClick={handleChangeCategorySelector} selected={categoryTitleSelected} />}
+          {tabSelected !== tabsTitle[5] && <TabSelector direction='column' tabs={categoriesTabs} onClick={handleChangeCategorySelector} selected={categoryTitleSelected} />}
 
           {tabSelected === tabsTitle[0] && <PlayersManagement tournamentId={tournamentId} categoryId={categorySelected} categories={categories} />}
           {tabSelected === tabsTitle[1] && <GroupsManagement tournamentId={tournamentId} categoryId={categorySelected} />}

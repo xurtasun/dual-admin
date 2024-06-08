@@ -25,8 +25,8 @@ interface ManagementMatchesStore {
   teamsSelector: ITeam[]
   matchFormErrors: FormInputsErrors
   finalMatches: MatchInType | null
-  manualTeams: boolean
-  setManualTeams: (manualTeams: boolean) => void
+  manualTeams: boolean[]
+  setManualTeams: (manualTeams: boolean[]) => void
   setMatchFormErrors: (matchFormErrors: FormInputsErrors) => void
   setTeamsSelector: (teamsSelector: ITeam[]) => void
   setMatch: ({ match, groupId }: { match?: any, groupId?: string }) => void
@@ -35,7 +35,7 @@ interface ManagementMatchesStore {
   setCategoryId: (categoryId: string | null) => void
   getGroupsMatchesByTournamentAndCategory: () => void
   getTeamsByTournamentAndCategory: () => void
-  addTeamToMatch: (teamId: string) => void
+  addTeamToMatch: (teamId: string, teamIndex: number) => void
   updateTeamToMatch: (teamId: string, oldTeam: ITeam) => void
   getTeamById: (teamId: string) => ITeam | undefined
   createMatch: (match: IMatch, refreshData: () => void) => void
@@ -55,8 +55,8 @@ export const useManagementMatchesStore = create<ManagementMatchesStore>((set, ge
     matchFormErrors: {},
     teamsSelector: [],
     finalMatches: null,
-    manualTeams: false,
-    setManualTeams: (manualTeams: boolean) => {
+    manualTeams: [false, false],
+    setManualTeams: (manualTeams: boolean[]) => {
       set({ manualTeams })
     },
     setMatchFormErrors: (matchFormErrors: FormInputsErrors) => {
@@ -105,20 +105,29 @@ export const useManagementMatchesStore = create<ManagementMatchesStore>((set, ge
       const teams = get().teamsSelector
       return teams.find((team) => team._id === teamId)
     },
-    addTeamToMatch: (teamId: string) => {
+    addTeamToMatch: (teamId: string, teamIndex: number) => {
       const match = get().match
       const team = get().getTeamById(teamId)
       if (!team) return
       if (match) {
         const newMatch = { ...match }
-        newMatch.teams.push(team)
+        newMatch.teams[teamIndex] = team
         set({ match: newMatch })
       }
     },
     updateTeamToMatch: (teamId, oldTeam) => {
       const match = structuredClone(get().match)
       const team = get().getTeamById(teamId)
-      if (!team) return
+      if (!team) {
+        if (match?.teams) {
+          const index = match.teams.findIndex((t: any) => t._id === oldTeam._id)
+          if (index !== -1) {
+            match.teams[index] = null as any
+          }
+        }
+        get().setMatch({ match })
+        return
+      }
       if (match) {
         if (match.teams) {
           const index = match.teams.findIndex((t: any) => t._id === oldTeam._id)

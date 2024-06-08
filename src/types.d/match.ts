@@ -3,6 +3,7 @@ import { ITeam } from './team'
 import { ITournament } from './tournament'
 
 export interface IMatch {
+  position: number
   _id: string
   courtName: string
   groupId: string

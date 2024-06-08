@@ -15,7 +15,6 @@ const baseApi = axios.create({ baseURL, withCredentials: true })
 
 authApi.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken
-  console.log(token)
   const headers = config.headers as AxiosRequestConfig['headers']
   if (token != null && headers != null) headers.Authorization = `Bearer ${token}`
   return config

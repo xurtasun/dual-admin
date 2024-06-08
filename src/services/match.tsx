@@ -4,20 +4,29 @@ import { IMatch } from '../types.d/match'
 export const createMatch = async (match: IMatch) => {
   const newMatch = {
     ...match,
-    teams: match.teams.map((team) => team._id)
+    teams: match.teams.map((team) => {
+      if (!team) return null
+      return team._id
+    })
   }
+  console.log('Creating match', newMatch)
   return await authApi.post('/matches/', newMatch)
 }
 
 export const updateMatch = async (match: IMatch) => {
   const newMatch = {
     ...match,
-    teams: match.teams.map((team) => team._id),
-    result: match.result.map((result) => {
-      if (!result) return [0, 0].join('-')
-      return result
-    })
-
+    teams: match.teams.map((team) => {
+      if (!team) return null
+      return team._id
+    }),
+    result: match.teams.some((team) => !team)
+      ? []
+      : match.result.map((result) => {
+        if (!result) return [0, 0].join('-')
+        return result
+      }),
+    winner: match.teams.some((team) => !team) && null
   }
   return await authApi.put(`/matches/${match._id}`, newMatch)
 }

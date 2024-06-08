@@ -30,7 +30,6 @@ interface Props {
 export const MatchesManagement = ({ tournamentId, categoryId }: Props) => {
   const tournament = useManagementStore((state) => state.tournament)
   const matchLastDatetime = useManagementStore((state) => state.matchLastDatetime)
-  const matchLastType = useManagementStore((state) => state.matchLastType)
   const setTournamentId = useManagementMatchesStore((state) => state.setTournamentId)
   const match = useManagementMatchesStore((state) => state.match)
   const setMatch = useManagementMatchesStore((state) => state.setMatch)
@@ -43,7 +42,7 @@ export const MatchesManagement = ({ tournamentId, categoryId }: Props) => {
     datetime: (matchLastDatetime && new Date(matchLastDatetime)) || (tournament ? new Date(tournament.date[0]) : ''),
     teams: [],
     groupId: '',
-    type: matchLastType || 'Group',
+    type: 'Group',
     tournament: tournamentId,
     category: categoryId,
     placeholders: []

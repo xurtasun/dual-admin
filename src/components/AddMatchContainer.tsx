@@ -22,6 +22,7 @@ interface Props {
   setMatch: (match: { match: IMatch | null }) => void
   refreshData: () => void
   matchTypes: Array<{ id: string, name: string }>
+  matchPositions?: number[]
 }
 
 interface Styles {
@@ -92,7 +93,7 @@ const styles: Styles = {
     gap: 10
   },
   selector: {
-    width: 184,
+    width: 214,
     height: 20,
     padding: '20px 10px',
     borderRadius: 'var(--dualpadel-radius-15)'
@@ -119,7 +120,7 @@ const styles: Styles = {
     margin: 3
   }
 }
-export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: Props) => {
+export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes, matchPositions }: Props) => {
   const setMatchLastDatetime = useManagementStore((state) => state.setMatchLastDatetime)
   const setMatchLastType = useManagementStore((state) => state.setMatchLastType)
   const tournament = useManagementStore((state) => state.tournament)
@@ -162,6 +163,9 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
     setMatchLastType(matchType?.id || 'Group')
     return matchType?.name || placeholder
   }
+  const getPositionName = (id: string, placeholder: string) => {
+    return id || placeholder
+  }
   const handleDateChange = (e: SelectChangeEvent) => {
     const date = new Date(match.datetime.valueOf())
     date.setFullYear(new Date(e.target.value).getFullYear())
@@ -180,11 +184,10 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
     setMatch({ match: { ...match, datetime: time } })
     setMatchLastDatetime(time)
   }
-  const handleTeamSelectorChange = (e: SelectChangeEvent) => {
-    addTeamToMatch(e.target.value)
+  const handleTeamSelectorChange = (e: SelectChangeEvent, index: number) => {
+    addTeamToMatch(e.target.value, index)
   }
   const handleTeamSelectorEdit = (e: SelectChangeEvent, oldTeam: ITeam) => {
-    console.log(e.target.value, oldTeam)
     updateTeamToMatch(e.target.value, oldTeam)
   }
   const handleCourtNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -251,23 +254,29 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
     }
   }
 
-  const handleManualTeams = () => {
-    setManualTeams(!manualTeams)
+  const handleManualTeams = (index: number) => {
+    const ManualTeams = manualTeams.map((manual, i) => {
+      if (index === i) return !manual
+      else return manual
+    })
+    setManualTeams(ManualTeams)
   }
 
   const handleChangePlaceholder = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     let placeholders = structuredClone(match.placeholders)
     if (!placeholders) {
-      placeholders = ['', '']
+      placeholders = [null as any, null as any]
     }
     placeholders[index] = e.target.value
+    console.log(placeholders)
     setMatch({ match: { ...match, placeholders } })
   }
 
   useEffect(() => {
     setEditMode(!!match._id)
+    setManualTeams([!match.teams[0], !match.teams[1]])
     console.log(match)
-  }, [match, setManualTeams])
+  }, [match, setManualTeams, setEditMode])
   return (
     <div className='addMatchContainer' style={styles.addMatchContainer}>
       <div className='addMatchHeader' style={styles.addMatchHeader}>
@@ -279,17 +288,14 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
       </div>
       <div className='form' style={styles.form}>
         <div className='flexRow' style={styles.flexRow}>
-          <Selector disabled={match.type !== 'Group'} options={groups.map((group) => { return ({ id: group._id, name: group.name }) })} value={match.groupId} styles={styles.selector} placeholder='Grupo' onChange={(e) => setMatch({ match: { ...match, groupId: e.target.value } })} getValueFromId={getGroupNameFromId} />
-          <Selector options={tournament?.date.map((dat) => { return ({ id: dat, name: new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }) }) })} value={match.datetime} styles={styles.selector} placeholder='Grupo' onChange={handleDateChange} getValueFromId={getDateNameFromValue} />
+          <Selector disabled={match.type !== 'Group'} options={groups.map((group) => { return ({ id: group._id, name: group.name }) })} value={match.groupId} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={(e) => setMatch({ match: { ...match, groupId: e.target.value } })} getValueFromId={getGroupNameFromId} />
+          <Selector options={tournament?.date.map((dat) => { return ({ id: dat, name: new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }) }) })} value={match.datetime} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={handleDateChange} getValueFromId={getDateNameFromValue} />
         </div>
         <div className='flexRow' style={styles.flexRow}>
           <Input placeholder='Pista' errorMessage={matchFormErrors.courtName?.message} styles={matchFormErrors.courtName ? { ...styles.input, ...RED_BORDER_VALIDATOR } : styles.input} type='string' onChange={handleCourtNameChange} value={match.courtName} />
           <Input placeholder='Hora' styles={{ ...styles.input, width: 70 }} type='time' step='900' onChange={handleTimeChange} value={new Date(match.datetime).toLocaleTimeString('es-ES', localTimeStringOptions)} />
           {matchTypes && <Selector options={matchTypes} value={match.type} styles={{ ...styles.selector, width: 140 }} placeholder='Tipo' onChange={(e) => setMatch({ match: { ...match, type: e.target.value } })} getValueFromId={getMatchTypeName} />}
-          <div className='flexColumn' style={{ ...styles.flexColumn, gap: 0, alignItems: 'center' }}>
-            <Label text='Manual' />
-            {manualTeams ? <ToggleOn onClick={() => handleManualTeams()} styles={{ fontSize: 30 }} /> : <ToggleOff onClick={() => handleManualTeams()} styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} />}
-          </div>
+          {matchPositions && match.type !== 'Group' && <Selector options={matchPositions.map((position) => { return ({ id: position, name: position.toString() }) })} value={match.position} styles={{ ...styles.selector, width: 95 }} placeholder='Pos' onChange={(e) => setMatch({ match: { ...match, position: Number(e.target.value) } })} getValueFromId={getPositionName} />}
 
         </div>
         <div className='flexColumn' style={styles.flexColumn}>
@@ -298,13 +304,20 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
               return (
                 <div className='flexRow' style={styles.flexRow} key={index}>
                   {
-                    match.teams[index]
-                      ? manualTeams
-                        ? <Input styles={{ width: 362, height: 45, fontSize: 16 }} placeholder={`Nombre Equipo ${index}`} onChange={(e) => handleChangePlaceholder(e, index)} value={match.placeholders[index]} />
-                        : <>
-                          <TeamSelector direction='column' value={match.teams[index]} teams={teamsSelector} onChange={(e) => handleTeamSelectorEdit(e, match.teams[index])} styles={{ borderRadius: 'var(--dualpadel-radius-15)' }} />
-                          <div className='results' style={styles.flexRow}>
-                            {
+
+                  manualTeams[index]
+                    ? <>
+                      <Input styles={{ width: 314, height: 45, fontSize: 16, borderRadius: 'var(--dualpadel-radius-15)' }} placeholder={`Nombre Equipo ${index}`} onChange={(e) => handleChangePlaceholder(e, index)} value={match.placeholders?.[index]} />
+                      <div className='flexColumn' style={{ ...styles.flexColumn, gap: 0, alignItems: 'center' }}>
+                        <Label text='Manual' />
+                        {manualTeams[index] ? <ToggleOn onClick={() => handleManualTeams(index)} styles={{ fontSize: 30 }} /> : <ToggleOff onClick={() => handleManualTeams(index)} styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} />}
+                      </div>
+                    </>
+                    : <>
+                      <TeamSelector direction='column' value={match.teams[index]} teams={teamsSelector} onChange={match.teams[index] ? (e) => handleTeamSelectorEdit(e, match.teams[index]) : (e) => handleTeamSelectorChange(e, index)} styles={{ borderRadius: 'var(--dualpadel-radius-15)', width: 330 }} />
+                      {
+                        editMode && <div className='results' style={styles.flexRow}>
+                          {
                                   editMode && match.teams.length >= teamsInMatch && [...Array(tournament?.sets).keys()].map((_set, setIndex) => {
                                     return (
                                       <div className='setResult' key={setIndex} style={styles.resultSet}>
@@ -315,12 +328,14 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes }: 
                                     )
                                   })
                           }
-                          </div>
-                        </>
-                      : manualTeams
-                        ? <Input styles={{ width: 362, height: 45, fontSize: 16 }} placeholder={`Nombre Equipo ${index}`} onChange={(e) => handleChangePlaceholder(e, index)} value={match.placeholders[index]} />
+                        </div>
+                      }
 
-                        : <TeamSelector direction='column' value={null} teams={teamsSelector} onChange={handleTeamSelectorChange} />
+                      <div className='flexColumn' style={{ ...styles.flexColumn, gap: 0, alignItems: 'center' }}>
+                        <Label text='Manual' />
+                        {manualTeams[index] ? <ToggleOn onClick={() => handleManualTeams(index)} styles={{ fontSize: 30 }} /> : <ToggleOff onClick={() => handleManualTeams(index)} styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} />}
+                      </div>
+                    </>
                   }
                 </div>
               )

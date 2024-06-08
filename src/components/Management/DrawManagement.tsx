@@ -7,7 +7,7 @@ import { AddMatchContainer } from '../AddMatchContainer'
 import { useManagementStore } from '../../store/management'
 import { useManagementMatchesStore } from '../../store/managementMatches'
 import { Loader } from '../Loader'
-import { finalMatchTypes } from '../../libs/utils'
+import { finalMatchTypes, finalMatchPositions } from '../../libs/utils'
 import Modal from '@mui/material/Modal'
 
 interface Props {
@@ -22,7 +22,7 @@ interface Styles {
   finalTypeTitle: React.CSSProperties
   finalMatchDraw: React.CSSProperties
 }
-const HEIGHT_MATCH = 177
+const HEIGHT_MATCH = 190
 
 const styles: Styles = {
   flexRow: {
@@ -83,12 +83,13 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
 
   const newMatch = {
     datetime: (matchLastDatetime && new Date(matchLastDatetime)) || (tournament ? new Date(tournament.date[0]) : ''),
-    teams: [],
+    teams: [null, null],
     groupId: '',
     type: matchLastType || 'Group',
     tournament: tournamentId,
     category: categoryId,
-    placeholders: []
+    placeholders: [null, null],
+    position: 0
   }
   useEffect(() => {
     setTournamentId(tournamentId)
@@ -135,9 +136,11 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
     }
     return 0
   }
+
   if (finalMatchesLoading) {
     return <Loader />
   }
+
   return (
     <GrayContainer style={{ minWidth: 600, position: 'relative', flexDirection: 'column', alignItems: 'flex-start' }}>
       {
@@ -147,6 +150,7 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
         <div className='drawContainer' style={styles.drawContainer}>
           {
             finalMatches && Object.keys(finalMatches).sort(sortMatchTypes).map((key, typeIndex) => {
+              const matches = finalMatches[key].sort((a, b) => a.position - b.position)
               return (
                 <div className='finalType' style={styles.finalType} key={key}>
                   <div className='finalTypeTitle' style={styles.finalTypeTitle}>
@@ -154,24 +158,32 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
 
                   </div>
                   {
-                    finalMatches[key].map((match, matchIndex) => {
+
+                    matches.map((match, matchIndex) => {
+                      const positionDiff = ((match.position - matches[matchIndex - 1]?.position) || 0) === 0 && matchIndex === 0 ? match.position : (match.position - matches[matchIndex - 1]?.position) || 0
+
                       let marginTop = 0
+                      const className = 'finalMatchDraw'
+                      const finalType = (Object.keys(finalMatches).length - 1) === typeIndex
                       switch (typeIndex) {
                         case 0:
-                          marginTop = 0
+                          marginTop = 0 + (positionDiff * HEIGHT_MATCH)
                           break
                         case 1:
-                          marginTop = matchIndex === 0 ? HEIGHT_MATCH * 0.5 : HEIGHT_MATCH * typeIndex
+                          marginTop = matchIndex === 0 ? HEIGHT_MATCH * 0.5 + (positionDiff * HEIGHT_MATCH) : HEIGHT_MATCH * positionDiff
                           break
                         case 2:
-                          marginTop = HEIGHT_MATCH * 1.5
+                          if (finalType) marginTop = matchIndex === 0 ? HEIGHT_MATCH * 1 + (positionDiff * HEIGHT_MATCH * 0.5) : HEIGHT_MATCH * positionDiff
+                          else marginTop = matchIndex === 0 ? HEIGHT_MATCH * 1 + (positionDiff * HEIGHT_MATCH) : HEIGHT_MATCH * positionDiff
+
                           break
                         case 3:
-                          marginTop = HEIGHT_MATCH * 2.5
+                          if (finalType) marginTop = matchIndex === 0 ? HEIGHT_MATCH * 1.5 + (positionDiff * HEIGHT_MATCH * 0.5) : HEIGHT_MATCH * positionDiff
+                          else marginTop = matchIndex === 0 ? HEIGHT_MATCH * 1.5 + (positionDiff * HEIGHT_MATCH) : HEIGHT_MATCH * positionDiff
                           break
                       }
                       return (
-                        <div className='finalMatchDraw' style={{ ...styles.finalMatchDraw, marginTop }} key={match._id}>
+                        <div className={className} style={{ ...styles.finalMatchDraw, marginTop }} key={match._id}>
                           <MatchContainer match={match} key={match._id} setMatch={setMatch} refreshData={getFinalMatchesByTournamentAndCategory} />
                         </div>
                       )
@@ -187,7 +199,7 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
           match &&
             <Modal open={!!match}>
 
-              <AddMatchContainer match={match} setMatch={setMatch} refreshData={getFinalMatchesByTournamentAndCategory} matchTypes={finalMatchTypes} />
+              <AddMatchContainer match={match} setMatch={setMatch} refreshData={getFinalMatchesByTournamentAndCategory} matchTypes={finalMatchTypes} matchPositions={finalMatchPositions} />
             </Modal>
 
         }

@@ -1,54 +1,19 @@
-.finalType:not(:last-child):nth-child(1) {
-  .finalMatchDraw:nth-child(2)::after { 
-    content: '';
-    color: #fff;
+
+.finalType:not(:last-child){
+  .finalMatchDraw::after {
+    content: "";
     position: absolute;
-    width: 25px;
-    height: 187px;
     top: 50%;
     left: 100%;
-    border: 3px solid var(--dualpadel-light-gray);
-    border-left: 0;
-  }
-  .finalMatchDraw:nth-child(4)::after { 
-    content: '';
-    color: #fff;
-    position: absolute;
     width: 25px;
-    height: 187px;
-    top: 50%;
-    left: 100%;
     border: 3px solid var(--dualpadel-light-gray);
-    border-left: 0;
-  }
-}
-.finalType:not(:last-child):nth-child(2) {
-  .finalMatchDraw:nth-child(2)::after { 
-    content: '';
-    color: #fff;
-    position: absolute;
-    width: 25px;
-    height: calc(187px * 2);
-    top: 50%;
-    left: 100%;
-    border: 3px solid var(--dualpadel-light-gray);
-    border-left: 0;
-  }
-  .finalMatchDraw:nth-child(4)::after { 
-    content: '';
-    color: #fff;
-    position: absolute;
-    width: 25px;
-    height: 187px;
-    top: 50%;
-    left: 100%;
-    border: 3px solid var(--dualpadel-light-gray);
+    height: calc(calc(183px / 2) * var(--nth-child));
     border-left: 0;
   }
 }
 
-.finalType:not(:first-child) {
-  .finalMatchDraw::before { 
+.finalType:not(:first-child){
+  .finalMatchDraw::before {
     content: '';
     color: #fff;
     position: absolute;
@@ -58,4 +23,48 @@
     border-left: 0;
     border-bottom: 0;
   }
+}
+
+.finalType{
+  .finalMatchDraw:nth-child(even):after {
+    border-bottom: 0;
+  }
+  .finalMatchDraw:nth-child(even).forceOdd:after {
+    border: 3px solid var(--dualpadel-light-gray);
+    bottom: 50%;
+    top: auto;
+    border-top: 0;
+    border-left: 0;
+  }
+}
+.finalType{
+  .finalMatchDraw:nth-child(odd):after {
+    bottom: 50%;
+    top: auto;
+    border-top: 0;
+  }
+  .finalMatchDraw:nth-child(odd).forceEven::after {
+    bottom: auto;
+    top: 50%;
+    border: 3px solid var(--dualpadel-light-gray);
+    border-left: 0;
+    border-bottom: 0;
+  }
+}
+
+
+.finalType:nth-child(1){
+  --nth-child: 1
+}
+.finalType:nth-child(2){
+  --nth-child: 2
+}
+.finalType:nth-child(3){
+  --nth-child: 3
+}
+.finalType:nth-child(4){
+  --nth-child: 4
+}
+.finalType:nth-child(5){
+  --nth-child: 5
 }
