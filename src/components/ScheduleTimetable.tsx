@@ -58,8 +58,11 @@ export const ScheduleTimeTable = ({ matches, courtIndex, refreshData, isMobile }
           timeTable.map((time) => {
             const showTime = !!matches.find((match) => (new Date(match.datetime).getTime() === time.getTime()))
             const minHeight = ((152 / tournament.matchTime) * 4.9)
-            const matchesFOUND = matches.filter((match) => new Date(match.datetime).getTime() === time.getTime())
-            if (matchesFOUND && matchesFOUND.length > 7) console.log(matchesFOUND, time.toLocaleTimeString())
+            const matchesFOUND = matches.filter((match) => new Date(match.datetime).getTime() === time.getTime() && match.courtName.includes(String(courtIndex + 1)))
+            if (matchesFOUND && matchesFOUND.length > 1) {
+              const categories = matchesFOUND.map((match) => match.category.parent?.name)
+              console.log(categories.join(' - '), time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }), String(courtIndex + 1))
+            }
             return (
               <div className='timeRow' key={time.getTime()} style={{ ...styles.timeRow, minHeight }}>
                 {

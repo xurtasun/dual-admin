@@ -23,6 +23,7 @@ interface ManagementMatchesStore {
   matchesLoading: boolean
   finalMatchesLoading: boolean
   teamsSelector: ITeam[]
+  finalMatchesRaw: IMatch[]
   matchFormErrors: FormInputsErrors
   finalMatches: MatchInType | null
   manualTeams: boolean[]
@@ -54,6 +55,7 @@ export const useManagementMatchesStore = create<ManagementMatchesStore>((set, ge
     match: null,
     matchFormErrors: {},
     teamsSelector: [],
+    finalMatchesRaw: [],
     finalMatches: null,
     manualTeams: [false, false],
     setManualTeams: (manualTeams: boolean[]) => {
@@ -172,6 +174,7 @@ export const useManagementMatchesStore = create<ManagementMatchesStore>((set, ge
         getFinalMatchesByTournamentAndCategory(tournamentId, categoryId)
           .then(({ data }) => {
             const finalMatches = get().splitMatchesInTypes(data)
+            set({ finalMatchesRaw: data })
             set({ finalMatches })
             set({ finalMatchesLoading: false })
           })

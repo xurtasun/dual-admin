@@ -23,6 +23,7 @@ interface Props {
   refreshData: () => void
   matchTypes: Array<{ id: string, name: string }>
   matchPositions?: number[]
+  finalMatches?: IMatch[]
 }
 
 interface Styles {
@@ -120,7 +121,7 @@ const styles: Styles = {
     margin: 3
   }
 }
-export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes, matchPositions }: Props) => {
+export const AddMatchContainer = ({ finalMatches, match, setMatch, refreshData, matchTypes, matchPositions }: Props) => {
   const setMatchLastDatetime = useManagementStore((state) => state.setMatchLastDatetime)
   const setMatchLastType = useManagementStore((state) => state.setMatchLastType)
   const tournament = useManagementStore((state) => state.tournament)
@@ -149,6 +150,11 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes, ma
   const getGroupNameFromId = (id: string, placeholder: string) => {
     const group = groups.find((group) => group._id === id)
     return group?.name || placeholder
+  }
+  const getMatchFromId = (id: string, placeholder: string) => {
+    const match = finalMatches?.find((match) => match._id === id)
+    if (!match) return placeholder
+    return `${match.type} - ${match.courtName} - ${new Date(match.datetime).toLocaleTimeString('es-ES', localTimeStringOptions)}` || placeholder
   }
   const getDateNameFromValue = (value: string) => {
     if (value) {
@@ -312,6 +318,8 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes, ma
                         <Label text='Manual' />
                         {manualTeams[index] ? <ToggleOn onClick={() => handleManualTeams(index)} styles={{ fontSize: 30 }} /> : <ToggleOff onClick={() => handleManualTeams(index)} styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} />}
                       </div>
+                      {finalMatches && match.type !== 'Group' && <Selector options={finalMatches.map((match) => { return ({ id: match._id, name: `${match.type} - ${match.courtName} - ${new Date(match.datetime).toLocaleTimeString('es-ES', localTimeStringOptions)}` }) })} value={index === 0 ? match.teamOneWinnerLinkMatch : match.teamTwoWinnerLinkMatch} styles={{ ...styles.input, width: 140 }} placeholder='Partido' onChange={(e) => index === 0 ? setMatch({ match: { ...match, teamOneWinnerLinkMatch: e.target.value } }) : setMatch({ match: { ...match, teamTwoWinnerLinkMatch: e.target.value } })} getValueFromId={getMatchFromId} />}
+
                     </>
                     : <>
                       <TeamSelector direction='column' value={match.teams[index]} teams={teamsSelector} onChange={match.teams[index] ? (e) => handleTeamSelectorEdit(e, match.teams[index]) : (e) => handleTeamSelectorChange(e, index)} styles={{ borderRadius: 'var(--dualpadel-radius-15)', width: 330 }} />
@@ -335,6 +343,7 @@ export const AddMatchContainer = ({ match, setMatch, refreshData, matchTypes, ma
                         <Label text='Manual' />
                         {manualTeams[index] ? <ToggleOn onClick={() => handleManualTeams(index)} styles={{ fontSize: 30 }} /> : <ToggleOff onClick={() => handleManualTeams(index)} styles={{ color: 'var(--dualpadel-gray)', fontSize: 30 }} />}
                       </div>
+
                     </>
                   }
                 </div>

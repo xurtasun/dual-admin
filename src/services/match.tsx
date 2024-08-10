@@ -26,7 +26,9 @@ export const updateMatch = async (match: IMatch) => {
         if (!result) return [0, 0].join('-')
         return result
       }),
-    winner: match.teams.some((team) => !team) && null
+    winner: match.teams.some((team) => !team) && null,
+    teamOneWinnerLinkMatch: match.teamOneWinnerLinkMatch || null,
+    teamTwoWinnerLinkMatch: match.teamTwoWinnerLinkMatch || null
   }
   return await authApi.put(`/matches/${match._id}`, newMatch)
 }

@@ -17,6 +17,7 @@ interface Styles {
   checkbox: React.CSSProperties
   team_player_tshirt: React.CSSProperties
   payed: React.CSSProperties
+  espera: React.CSSProperties
 }
 const styles: Styles = {
   players_container: {
@@ -78,6 +79,10 @@ const styles: Styles = {
   payed: {
     backgroundColor: '#92ed1b26',
     border: '3px solid #92ed1b2e'
+  },
+  espera: {
+    backgroundColor: '#ed1b1b26',
+    border: '3px solid #ed1b1b2e'
   }
 }
 interface Props {
@@ -99,7 +104,7 @@ export const TeamContainer = ({ team, children, showPayment, enableManagement, h
   }, [team])
 
   return (
-    <div className='team-container' style={teamPayed ? { ...styles.team_container, ...styles.payed, ...style } : { ...styles.team_container, ...style }} key={team._id}>
+    <div className='team-container' style={team.espera ? { ...styles.team_container, ...styles.espera, ...style } : teamPayed ? { ...styles.team_container, ...styles.payed, ...style } : { ...styles.team_container, ...style }} key={team._id}>
       <Tooltip title={team._id} placement='top'>
         <div className='players-container' style={styles.players_container}>
           {

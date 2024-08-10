@@ -74,6 +74,7 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
   const setCategoryId = useManagementMatchesStore((state) => state.setCategoryId)
 
   const finalMatches = useManagementMatchesStore((state) => state.finalMatches)
+  const finalMatchesRaw = useManagementMatchesStore((state) => state.finalMatchesRaw)
   const finalMatchesLoading = useManagementMatchesStore((state) => state.finalMatchesLoading)
   const getFinalMatchesByTournamentAndCategory = useManagementMatchesStore((state) => state.getFinalMatchesByTournamentAndCategory)
   const getTeamsByTournamentAndCategory = useManagementMatchesStore((state) => state.getTeamsByTournamentAndCategory)
@@ -199,7 +200,7 @@ export const DrawManagement = ({ tournamentId, categoryId }: Props) => {
           match &&
             <Modal open={!!match}>
 
-              <AddMatchContainer match={match} setMatch={setMatch} refreshData={getFinalMatchesByTournamentAndCategory} matchTypes={finalMatchTypes} matchPositions={finalMatchPositions} />
+              <AddMatchContainer finalMatches={finalMatchesRaw} match={match} setMatch={setMatch} refreshData={getFinalMatchesByTournamentAndCategory} matchTypes={finalMatchTypes} matchPositions={finalMatchPositions} />
             </Modal>
 
         }

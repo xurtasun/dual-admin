@@ -28,6 +28,7 @@ async error => {
     useAuthStore.getState().logout()
     window.location.href = '/login'
   }
+  throw error
 }
 )
 

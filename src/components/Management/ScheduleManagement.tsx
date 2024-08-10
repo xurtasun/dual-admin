@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useManagementScheduleStore } from '../../store/managementSchedule'
 import { GrayContainer } from '../GrayContainer'
 import { TabSelector } from '../TabSelector/TabSelector'
 import { useManagementStore } from '../../store/management'
 import { Schedule } from '../Schedule'
+import { useManagementMatchesStore } from '../../store/managementMatches'
+import Modal from '@mui/material/Modal'
+import { AddMatchContainer } from '../AddMatchContainer'
+import { groupMatchTypes } from '../../libs/utils'
 
 interface Props {
   tournamentId: string
@@ -38,6 +42,8 @@ export const ScheduleManagement = ({ tournamentId, isMobile }: Props) => {
   const setTournamentId = useManagementScheduleStore((state) => state.setTournamentId)
   const getMatchesByTournamentDate = useManagementScheduleStore((state) => state.getMatchesByTournamentDate)
   const matches = useManagementScheduleStore((state) => state.matches)
+  const match = useManagementMatchesStore((state) => state.match)
+  const setMatch = useManagementMatchesStore((state) => state.setMatch)
   const dayTabSelectedSchedule = useManagementStore((state) => state.dayTabSelectedSchedule)
   const setDayTabSelectedSchedule = useManagementStore((state) => state.setDayTabSelectedSchedule)
 
@@ -62,11 +68,15 @@ export const ScheduleManagement = ({ tournamentId, isMobile }: Props) => {
     }
   }, [setTournamentId, tournamentId])
 
-  useEffect(() => {
+  const refreshData = useCallback(() => {
     if (dayTabSelectedSchedule) {
       getMatchesByTournamentDate(new Date(dayTabSelectedSchedule.date))
     }
   }, [dayTabSelectedSchedule, getMatchesByTournamentDate])
+
+  useEffect(() => {
+    refreshData()
+  }, [refreshData])
 
   useEffect(() => {
     if (!tournament) return
@@ -86,6 +96,12 @@ export const ScheduleManagement = ({ tournamentId, isMobile }: Props) => {
         <div className='headerContainer' style={styles.headerContainer}>
           {dayTabSelectedSchedule && <Schedule isMobile={isMobile} courts={[...Array(tournament.courtNumber)]} date={dayTabSelectedSchedule.date} matches={matches} refreshData={handleGetMatchesByTournamentDate} />}
         </div>
+        {
+          match &&
+            <Modal open={!!match}>
+              <AddMatchContainer match={match} setMatch={setMatch} refreshData={refreshData} matchTypes={[...groupMatchTypes]} />
+            </Modal>
+        }
       </div>
     </GrayContainer>
   )

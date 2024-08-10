@@ -107,17 +107,33 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData, isMobi
   const teamsInMatch = 2
   const tournament = useManagementStore((state) => state.tournament)
   const updateMatch = useManagementMatchesStore((state) => state.updateMatch)
+  const setMatch = useManagementMatchesStore((state) => state.setMatch)
+  const setCategoryId = useManagementMatchesStore((state) => state.setCategoryId)
   const finished = !!match?.winner
   const playing = !!match?.playing
-  const handleDoubleClick = () => {
-    console.log('double click')
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (!match) return
-    if (!refreshData) return
-    updateMatch({ ...match, playing: !match.playing }, refreshData)
+    switch (e.detail) {
+      case 1:
+        console.log('single click')
+        break
+      case 2:
+        console.log('double click')
+        if (!refreshData) return
+        updateMatch({ ...match, playing: !match.playing }, refreshData)
+        break
+      case 3:
+        console.log('triple click')
+        setCategoryId(match.category._id)
+        setMatch({ match })
+        break
+      default:
+        break
+    }
   }
   if (!match?.category) return null
   return (
-    <div className='matchScheduleContainer' style={finished ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchFinished } : playing ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchPlaying } : { ...styles.matchScheduleContainer, ...stylesInput }} onDoubleClick={handleDoubleClick}>
+    <div className='matchScheduleContainer' style={finished ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchFinished } : playing ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchPlaying } : { ...styles.matchScheduleContainer, ...stylesInput }} onClick={handleClick}>
       <div className='matchScheduleHeader' style={styles.matchHeader}>
         <span>{match.category.parent ? match.category.parent?.name : match.category.name}</span>
         <span>{match.type}</span>

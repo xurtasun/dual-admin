@@ -15,6 +15,8 @@ export interface IMatch {
   type: string
   tournament: ITournament
   winner: string
+  teamTwoWinnerLinkMatch: string
+  teamOneWinnerLinkMatch: string
   finalized: boolean
   created: Date
   updated: Date
