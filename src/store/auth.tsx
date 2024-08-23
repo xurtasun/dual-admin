@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware'
 import { type IClient } from '../types.d/client'
 
 import { login, getMe, signUp } from '../services/auth'
-import { useCookies } from '../hooks/cookie'
 import { toast } from '../components/Sonner'
 
 interface ClientState {
@@ -21,7 +20,6 @@ interface ClientState {
 }
 
 export const useAuthStore = create(persist<ClientState>((set, _get) => {
-  const { get, remove } = useCookies()
   return {
     profile: null,
     accessToken: null,
@@ -31,8 +29,8 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
     registerFormErrors: null,
     login: async ({ email, password }: { email: string, password: string }) => {
       login({ email, password })
-        .then((_) => {
-          set({ isAuth: true, accessToken: get('accessToken') })
+        .then(({ data }) => {
+          set({ isAuth: true, accessToken: data.accessToken })
         })
         .catch((err) => {
           set({ isAuth: false, profile: null, accessToken: null })
@@ -41,9 +39,9 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
     },
     signUp: async ({ email, password, firstName, lastName }: { email: string, password: string, firstName: string, lastName: string }) => {
       signUp({ email, password, firstName, lastName })
-        .then((_) => {
+        .then(({ data }) => {
           console.log('User created')
-          set({ isAuth: true })
+          set({ isAuth: true, accessToken: data.accessToken })
         })
         .catch((err) => {
           console.log('Error')
@@ -55,8 +53,8 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
     getMe: async () => {
       return await new Promise((_resolve, reject) => {
         getMe()
-          .then((profile) => {
-            set({ profile, accessToken: get('accessToken'), isAuth: true, isAdmin: profile.role === 'admin' })
+          .then(({ data }) => {
+            set({ profile: data, isAdmin: data.role === 'admin' })
           })
           .catch((err) => {
             set({ isAuth: false, profile: null, accessToken: null })
@@ -66,7 +64,6 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
     },
     logout: () => {
       set({ isAuth: false, profile: null, accessToken: null })
-      remove('accessToken')
     }
   }
 }, { name: 'auth' }))

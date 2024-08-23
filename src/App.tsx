@@ -12,7 +12,6 @@ import {
 import { PlayersPage } from './pages/Players/PlayersPage'
 import { ProtectedRoute } from './components/ProtectedRoutes'
 import { useAuthStore } from './store/auth'
-import { useCookies } from './hooks/cookie'
 import { Sonner } from './components/Sonner'
 import { TournamentsPage } from './pages/Tournaments/TournamentsPage'
 import { CategoryPage } from './pages/Categories/CategoryPage'
@@ -25,12 +24,12 @@ function App () {
   // const client = useClientStore(state => state.client)
   const isAuth = useAuthStore(state => state.isAuth)
   const getMe = useAuthStore(state => state.getMe)
-  const { get } = useCookies()
+  const accessToken = useAuthStore(state => state.accessToken)
   useEffect(() => {
     console.log('isMobile', isMobile, 'isTablet', isTablet)
   }, [])
   useEffect(() => {
-    if (!isAuth && get('accessToken')) {
+    if (!isAuth && accessToken) {
       getMe()
         .catch(err => console.log(err))
     }
