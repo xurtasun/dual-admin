@@ -115,7 +115,7 @@ export const AddTournamentCategories = () => {
   }
 
   const getCategoryParentNameFromId = (id: string) => {
-    const categoryParent = categoriesParent.find((category) => category.id === id)
+    const categoryParent = categoriesParent.find((category) => category._id === id)
     return categoryParent?.name || 'None'
   }
 

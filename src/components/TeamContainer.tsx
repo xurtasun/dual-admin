@@ -90,7 +90,7 @@ interface Props {
   children?: React.ReactNode
   showPayment?: boolean
   enableManagement?: boolean
-  handlePayment?: (playerId: string, teamId: string, checked: boolean) => void
+  handlePayment?: (playerId: string, teamId: string | undefined, checked: boolean) => void
   style?: React.CSSProperties
 }
 const AVATAR_SIZE = 30
@@ -109,6 +109,7 @@ export const TeamContainer = ({ team, children, showPayment, enableManagement, h
         <div className='players-container' style={styles.players_container}>
           {
                 team.players.map((player, index) => {
+                  console.log(player)
                   return (
                     <div key={index} className='team-player-container' style={styles.player_container}>
                       <div className='team-player' style={styles.team_player}>

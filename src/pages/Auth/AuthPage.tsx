@@ -4,13 +4,13 @@ import github from '../../assets/github.svg'
 import dualpadel_blue from '../../assets/dualpadel.svg'
 
 import './auth.scss'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAuthStore } from '../../store/auth'
 
-import { Sonner } from '../../components/Sonner'
+import { toast } from '../../components/Sonner'
 
-import { Navigate } from 'react-router-dom'
+import { Navigate, useSearchParams } from 'react-router-dom'
 import { useOAuthRRSS } from '../../hooks/rrss'
 import { LoginInput } from '../../components/LoginInput'
 import { RED_BORDER_VALIDATOR, EMAIL_REGEX_VALIDATOR } from '../../libs/validators'
@@ -43,6 +43,9 @@ export const Auth = ({}: Props) => {
   const login = useAuthStore(state => state.login)
   const isAuth = useAuthStore(state => state.isAuth)
   const { googleOAuth } = useOAuthRRSS()
+  const [searchParams] = useSearchParams()
+  const provider = searchParams.get('provider')
+  const error = searchParams.get('error')
   const [registerFormErrors, setRegisterFormErrors] = useState<FormInputsErrors>({
     confirmPassword: null,
     password: null,
@@ -50,6 +53,14 @@ export const Auth = ({}: Props) => {
     email: null,
     lastName: null
   })
+  useEffect(() => {
+    if (error === '451' && provider) {
+      const message = provider === 'local' ? 'Se ha registrado con usuario y contraseña, por favor inicie sesión' : `Se ha registrado con ${provider}, por favor inicie sesión con la misma red social`
+      setTimeout(() => {
+        toast.error(message)
+      })
+    }
+  }, [error, provider])
 
   const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -229,7 +240,6 @@ export const Auth = ({}: Props) => {
             </div>
           </div>
         </div>
-        <Sonner position='bottom-center' />
       </div>
     )
   }

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 import { useAuthStore } from '../store/auth'
 
 const baseURL =
@@ -12,13 +12,6 @@ const authApi = axios.create({
 })
 
 const baseApi = axios.create({ baseURL, withCredentials: true })
-
-authApi.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken
-  const headers = config.headers as AxiosRequestConfig['headers']
-  if (token != null && headers != null) headers.Authorization = `Bearer ${token}`
-  return config
-})
 
 authApi.interceptors.response.use(response => {
   return response

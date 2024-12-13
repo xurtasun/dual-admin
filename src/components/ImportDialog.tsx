@@ -16,7 +16,7 @@ interface Props {
 }
 export const ImportDialog = ({ open, handleClose, handleConfirmation, playerIdToImport }: Props) => {
   const players = usePlayersStore(state => state.players)
-  const player = players.find(player => player.id === playerIdToImport)
+  const player = players.find(player => player._id === playerIdToImport)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataToSelect: any = {
     teams: { name: 'Equipos', value: 'teams', selected: true },

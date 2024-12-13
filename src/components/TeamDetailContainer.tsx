@@ -70,7 +70,6 @@ export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categor
     return category?.parent?.name || placeholder
   }
 
-  const [playersIndexSearched, setPlayersIndexSearched] = useState<number[]>([])
   const getCategoryById = (id: string) => {
     const category = categories.find((category) => category._id === id)
     if (!category) return null
@@ -91,40 +90,44 @@ export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categor
   }
   const getPlayerNameFromId = (id: string | number | readonly string[]) => {
     const player = players.find((player) => player._id === id)
+    if (!player) {
+      const searchedPlayer = playersSearched.find((player) => player._id === id)
+      return searchedPlayer ? `${searchedPlayer.name} ${searchedPlayer.lastName}` : id
+    }
     return player ? `${player.name} ${player.lastName}` : id
   }
   const getPlayerFromId = (id: string) => {
     const player = players.find((player) => player._id === id)
+    if (!player) {
+      const searchedPlayer = playersSearched.find((player) => player._id === id)
+      return searchedPlayer
+    }
     return player
   }
   const handleChangePlayer = (_event: SyntheticEvent<Element, Event>, value: string | null, oldValue: string) => {
-    console.log('handleChangePlayer')
+    console.log('handleChangePlayer', value, oldValue)
     const playersTeamIdToUpdate = team.players.map((player) => {
-      console.log(player._id, value)
+      console.log(player._id, oldValue)
       if (value === null || value === '') return player
       if (player._id === oldValue) {
         return getPlayerFromId(value) || player
+      } else {
+        return player
       }
-      return player
     })
-    setTeamToManage({ ...team, players: playersTeamIdToUpdate })
     console.log(playersTeamIdToUpdate)
+    setTeamToManage({ ...team, players: playersTeamIdToUpdate })
   }
-  const handleSearchPlayers = (value: string, index: number) => {
-    console.log('handleSearchPlayers')
-    const needToSearch = players.map((player) => `${player.name} ${player.lastName}`).includes(value)
-    if (!needToSearch && value.length > 3) {
+  const handleSearchPlayers = (value: string) => {
+    if (value.length > 3) {
       searchPlayers(value)
-      setPlayersIndexSearched([...playersIndexSearched, index])
     }
-    console.log(playersIndexSearched, playersSearched)
   }
   return (
     <div className='container' style={styles.container}>
       <div className='playersHeader' style={editMode ? { ...styles.playersHeader, gap: 30 } : styles.playersHeader}>
         {
         team.players.map((player, index) => {
-          console.log(playersIndexSearched, index, playersIndexSearched.includes(index))
           return (
             <div className='player' key={player._id} style={styles.playerHeader}>
               {
@@ -132,10 +135,10 @@ export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categor
                   ? <>
                     <AutocompleteComponent
                       label='Jugador'
-                      options={playersIndexSearched.includes(index) ? playersSearched.map((player) => player._id) : players.map((player) => player._id)}
+                      options={playersSearched.map((player) => player._id)}
                       value={player._id}
                       onChange={handleChangePlayer}
-                      onInputChange={(_event: SyntheticEvent<Element, Event>, value: string) => handleSearchPlayers(value, index)}
+                      onInputChange={(_event: SyntheticEvent<Element, Event>, value: string) => handleSearchPlayers(value)}
                       placeholder='Jugador'
                       disabled
                       error={false}

@@ -17,7 +17,14 @@ export const updateTeam = async (team: ITeam) => {
     tournament: team.tournament._id,
     players: team.players.map(player => player._id)
   }
-  return await authApi.put('/teams/' + team._id, newTeam)
+  delete newTeam.__v
+  delete newTeam._id
+  delete newTeam.created
+  delete newTeam.updated
+  if (!team._id) {
+    throw new Error('Team ID is undefined')
+  }
+  return await authApi.put(`/teams/${team._id}`, newTeam)
 }
 
 export const updateTeamRestrictions = async (restrictions: IRestriction[], teamId: string) => {

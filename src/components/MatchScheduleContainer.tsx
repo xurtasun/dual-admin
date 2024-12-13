@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useManagementStore } from '../store/management'
 import { useManagementMatchesStore } from '../store/managementMatches'
 import { IMatch } from '../types.d/match'
@@ -131,7 +132,15 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData, isMobi
         break
     }
   }
+  useEffect(() => {
+    if (!match) return
+    if (new Date(match.datetime).getHours() === 10 && match.courtName.includes('1') && match.category.parent?.name.includes('Mixto')) {
+      console.log(match)
+    }
+  }, [match])
+
   if (!match?.category) return null
+
   return (
     <div className='matchScheduleContainer' style={finished ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchFinished } : playing ? { ...styles.matchScheduleContainer, ...stylesInput, ...styles.matchPlaying } : { ...styles.matchScheduleContainer, ...stylesInput }} onClick={handleClick}>
       <div className='matchScheduleHeader' style={styles.matchHeader}>
@@ -149,11 +158,14 @@ export const MatchScheduleContainer = ({ match, stylesInput, refreshData, isMobi
                     match.teams[index]
                       ? (
                         <div className='matchPlayers' style={match.winner ? match.winner === match.teams[index]._id ? { ...styles.matchPlayers, ...styles.teamWinner } : { ...styles.matchPlayers, ...styles.teamLoser } : styles.matchPlayers}>
-                          {match.teams[index].players.map(player => (
-                            <div className='matchPlayer' key={player._id} style={matchPlayerStyles}>
-                              <span>{player.name} {player.lastName}</span>
-                            </div>
-                          ))}
+                          {match.teams[index].players.map(player => {
+                            const playerPayed = match.teams[index].payed.includes(player._id)
+                            return (
+                              <div className='matchPlayer' key={player._id} style={playerPayed ? { ...matchPlayerStyles, fontWeight: 600 } : matchPlayerStyles}>
+                                <span>{player.name} {player.lastName}</span>
+                              </div>
+                            )
+                          })}
                         </div>
                         )
                       : (

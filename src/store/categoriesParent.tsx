@@ -37,7 +37,7 @@ export const useCategoriesParentStore = create<CategoriesParentState>((set, get)
     },
     setCategoriesParent: (id: string | undefined) => {
       const categoriesParent = get().categoriesParent.map((category: ICategoryParent) => {
-        if (category.id === id) {
+        if (category._id === id) {
           return { ...category, enabled: !category.enabled }
         }
         return category

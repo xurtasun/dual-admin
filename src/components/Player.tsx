@@ -76,13 +76,13 @@ export const Player = ({ player, handleDetailPlayer }: Props) => {
       <Avatar {...stringAvatar({ name: `${player.name} ${player.lastName}`, size: AVATAR_SIZE })} />
       <div className='player-eye' style={styles.detail}>
         {
-          playerDetail?.id === player.id
+          playerDetail?._id === player._id
             ? <EyeClosedIcon styles={{ cursor: 'pointer' }} onClick={() => handleDetailPlayer(null)} />
             : <EyeIcon styles={{ cursor: 'pointer' }} onClick={() => handleDetailPlayer(player)} />
         }
       </div>
       <div className='info' style={styles.info}>
-        <Tooltip title={player.id} placement='top'>
+        <Tooltip title={player._id} placement='top'>
           <div className='name' style={styles.name}>{player.name} {player.lastName}</div>
         </Tooltip>
         <div className='data' style={styles.data}>

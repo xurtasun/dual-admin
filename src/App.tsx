@@ -1,7 +1,7 @@
 import './App.css'
 // import { useClientStore } from './store/client'
 import { Auth } from './pages/Auth/AuthPage'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { isMobile, isTablet } from 'react-device-detect'
 
 import {
@@ -19,21 +19,34 @@ import { TournamentDetail } from './pages/TournamentDetail/TournamentDetail'
 import { TournamentNew } from './pages/TournamentNew/TournamentNew'
 import { TournamentManagement } from './pages/TournamentManagement/TournamentManagement'
 import { ContactPage } from './pages/ContactPage/ContactPage'
+import { useCookies } from './hooks/cookie'
 
 function App () {
   // const client = useClientStore(state => state.client)
   const isAuth = useAuthStore(state => state.isAuth)
-  const getMe = useAuthStore(state => state.getMe)
-  const accessToken = useAuthStore(state => state.accessToken)
+  const setIsAuth = useAuthStore(state => state.setIsAuth)
+  // const getMe = useAuthStore(state => state.getMe)
+  const { get } = useCookies()
+  const [authChecking, setAuthChecking] = useState(true)
   useEffect(() => {
     console.log('isMobile', isMobile, 'isTablet', isTablet)
   }, [])
+  // useEffect(() => {
+  //   if (!isAuth && accessToken) {
+  //     getMe()
+  //       .catch(err => console.log(err))
+  //   }
+  // })
   useEffect(() => {
-    if (!isAuth && accessToken) {
-      getMe()
-        .catch(err => console.log(err))
+    const accessToken = get('admin_access_token')
+    if (accessToken) {
+      setIsAuth(true)
     }
-  })
+    setAuthChecking(false)
+  }, [get, setIsAuth])
+  if (authChecking) {
+    return <div>Loading...</div>
+  }
   return (
     <main>
       <Suspense fallback={<div>Loading...</div>}>
@@ -52,7 +65,7 @@ function App () {
             </Route>
           </Routes>
         </BrowserRouter>
-        <Sonner position='bottom-right' />
+        <Sonner position={isAuth ? 'bottom-right' : 'bottom-center'} />
       </Suspense>
     </main>
   )

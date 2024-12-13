@@ -64,7 +64,7 @@ export const TournamentsPage = ({ isTablet, isMobile }: Props) => {
   }, [getTournaments])
 
   const handleDetailTournament = (tournament: ITournament | null) => {
-    tournament && navigate('/tournaments/' + tournament.id)
+    tournament && navigate('/tournaments/' + tournament._id)
   }
 
   return (

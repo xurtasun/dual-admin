@@ -16,6 +16,8 @@ import { RestrictionsTournament } from '../../components/RestrictionsTournament/
 import { PrincipalButton } from '../../components/PrincipalButton'
 import { ToggleOn } from '../../components/Icons/ToggleOn'
 import { ToggleOff } from '../../components/Icons/ToggleOff'
+import { DownloadIcon } from '../../components/Icons/DownloadIcon'
+import { EyeIcon } from '../../components/Icons/EyeIcon'
 
 interface Styles {
   page: React.CSSProperties
@@ -32,8 +34,9 @@ interface Styles {
   img: React.CSSProperties
   text: React.CSSProperties
   button: React.CSSProperties
+  buttons_container: React.CSSProperties
+  download_button: React.CSSProperties
 }
-
 const styles: Styles = {
   page: {
     display: 'flex',
@@ -118,8 +121,25 @@ const styles: Styles = {
     cursor: 'pointer',
     fontSize: 14,
     marginTop: 0
+  },
+  buttons_container: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 16
+  },
+  download_button: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    fontSize: 12,
+    gap: 3,
+    cursor: 'pointer'
   }
 }
+
 interface Props {
   isTablet?: boolean
   isMobile?: boolean
@@ -129,10 +149,14 @@ export const TournamentDetail = ({ isTablet, isMobile }: Props) => {
   const getTournamentById = useTournamentsStore(state => state.getTournamentById)
   const updateTournamentOpenRegistrations = useTournamentsStore(state => state.updateTournamentOpenRegistrations)
   const updateTournamentPublicTimetable = useTournamentsStore(state => state.updateTournamentPublicTimetable)
+  const updateTournamentPublic = useTournamentsStore(state => state.updateTournamentPublic)
   const getCategoriesByTournamentId = useCategoriesStore(state => state.getCategoriesByTournamentId)
   const setTournamentId = useCategoriesStore(state => state.setTournamentId)
   const tournamentCategories = useCategoriesStore(state => state.categories)
   const tournament = useTournamentsStore(state => state.tournamentDetail)
+
+  const downloadNamesList = useTournamentsStore(state => state.downloadNamesList)
+  const downloadRestrictionsList = useTournamentsStore(state => state.downloadRestrictionsList)
 
   const navigate = useNavigate()
 
@@ -144,6 +168,11 @@ export const TournamentDetail = ({ isTablet, isMobile }: Props) => {
   const handleChangePublicTimetable = (actualValue: boolean) => {
     console.log('handleChangePublicTimetable', actualValue)
     updateTournamentPublicTimetable(!actualValue)
+  }
+
+  const handleChangeTournamentPublic = (actualValue: boolean) => {
+    console.log('handleChangeTournamentPublic', actualValue)
+    updateTournamentPublic(!actualValue)
   }
 
   useEffect(() => {
@@ -211,9 +240,24 @@ export const TournamentDetail = ({ isTablet, isMobile }: Props) => {
                   {tournament.openRegistrations ? <ToggleOn styles={{ fontSize: 30, color: 'var(--dualpadel-color)' }} onClick={() => handleChangeOpenRegistrations(tournament.openRegistrations)} /> : <ToggleOff styles={{ fontSize: 30, color: 'var(--dualpadel-gray)' }} onClick={() => handleChangeOpenRegistrations(tournament.openRegistrations)} />}
                   Horarios
                   {tournament.publicTimetable ? <ToggleOn styles={{ fontSize: 30, color: 'var(--dualpadel-color)' }} onClick={() => handleChangePublicTimetable(tournament.publicTimetable)} /> : <ToggleOff styles={{ fontSize: 30, color: 'var(--dualpadel-gray)' }} onClick={() => handleChangePublicTimetable(tournament.publicTimetable)} />}
+                  Publico
+                  {tournament.public ? <ToggleOn styles={{ fontSize: 30, color: 'var(--dualpadel-color)' }} onClick={() => handleChangeTournamentPublic(tournament.public)} /> : <ToggleOff styles={{ fontSize: 30, color: 'var(--dualpadel-gray)' }} onClick={() => handleChangeTournamentPublic(tournament.public)} />}
+
                 </div>
-                <div className='tournament-management-button'>
+                <div className='tournament-management-button' style={styles.buttons_container}>
                   <PrincipalButton text='Gestión' onClick={() => navigate(location.pathname + '/management')} />
+                  <div className='download-button' style={styles.download_button} onClick={() => downloadNamesList(tournament._id)}>
+                    <DownloadIcon styles={{ color: 'var(--dualpadel-color)', cursor: 'pointer' }} />
+                    Lista de nombres
+                  </div>
+                  <div className='download-button' style={styles.download_button} onClick={() => downloadRestrictionsList(tournament._id)}>
+                    <DownloadIcon styles={{ color: 'var(--dualpadel-color)', cursor: 'pointer' }} />
+                    Preferencias horarias
+                  </div>
+                  <div className='download-button' style={styles.download_button}>
+                    <EyeIcon styles={{ color: 'var(--dualpadel-color)', cursor: 'pointer' }} />
+                    Tallas Camisetas
+                  </div>
                 </div>
               </div>
 

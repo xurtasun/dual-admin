@@ -4,16 +4,17 @@ import { IRestriction } from './restriction'
 import { ITournament } from './tournament'
 
 export interface ITeam {
-  _id: string
+  _id?: string
+  __v?: number
   players: IPlayer[]
   matches: string[]
   tournament: ITournament
   payed: string[]
   category: ICategory
-  created: Date
+  created?: Date
   restrictions: IRestriction[]
   scoring: number
-  updated: Date
+  updated?: Date
   espera: boolean
   enabled: boolean
   result: {

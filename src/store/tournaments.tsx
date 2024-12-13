@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand'
-import { getMyTournaments, getTournamentById, updateTournamentRestrictions, updateTournamentOpenRegistrations, updateTournamentPublicTimetable } from '../services/tournaments'
+import { getMyTournaments, getTournamentById, updateTournamentRestrictions, updateTournamentOpenRegistrations, updateTournamentPublicTimetable, updateTournamentPublic, downloadNamesList, downloadRestrictionsList } from '../services/tournaments'
 import { getCategoriesByTournamentId } from '../services/categories'
 import { ITournament } from '../types.d/tournament'
 import { IQuery } from '../types.d/generic'
@@ -28,6 +28,9 @@ interface TournamentsState {
   setTournamentRestrictions: (restrictions: IRestriction) => void
   updateTournamentOpenRegistrations: (openRegistrations: boolean) => void
   updateTournamentPublicTimetable: (publicTimetable: boolean) => void
+  updateTournamentPublic: (publicTournament: boolean) => void
+  downloadNamesList: (tournamentId: string) => void
+  downloadRestrictionsList: (tournamentId: string) => void
 }
 export const useTournamentsStore = create<TournamentsState>((set, _get) => {
   return {
@@ -41,7 +44,7 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
     tournamentCategories: [],
     newRestriction: null,
     updateTournamentOpenRegistrations: (openRegistrations: boolean) => {
-      updateTournamentOpenRegistrations(_get().tournamentDetail?.id as string, openRegistrations)
+      updateTournamentOpenRegistrations(_get().tournamentDetail?._id as string, openRegistrations)
         .then(res => {
           set({
             tournamentDetail: res.data
@@ -53,12 +56,25 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
         })
     },
     updateTournamentPublicTimetable: (publicTimetable: boolean) => {
-      updateTournamentPublicTimetable(_get().tournamentDetail?.id as string, publicTimetable)
+      updateTournamentPublicTimetable(_get().tournamentDetail?._id as string, publicTimetable)
         .then(res => {
           set({
             tournamentDetail: res.data
           })
           toast.success('Actualizados horarios')
+        })
+        .catch(_ => {
+          toast.error('Error al actualizar la restricción')
+        })
+    },
+    updateTournamentPublic: (publicTournament: boolean) => {
+      updateTournamentPublic(_get().tournamentDetail?._id as string, publicTournament)
+        .then(res => {
+          set({
+            tournamentDetail: res.data
+          })
+          if (publicTournament) toast.success('Torneo público')
+          else toast.success('Torneo privado')
         })
         .catch(_ => {
           toast.error('Error al actualizar la restricción')
@@ -104,7 +120,7 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
         }
         return restriction
       })
-      updateTournamentRestrictions(_get().tournamentDetail?.id as string, restrictions as IRestriction[])
+      updateTournamentRestrictions(_get().tournamentDetail?._id as string, restrictions as IRestriction[])
         .then(res => {
           set({
             tournamentDetail: res.data
@@ -124,7 +140,7 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
         const restrictions = _get().tournamentDetail?.restrictions
         if (!restrictions) return
         const restriction = { startTime: newRestriction.startTime.toISOString(), endTime: newRestriction.endTime.toISOString(), blocked: newRestriction.blocked } as any
-        updateTournamentRestrictions(_get().tournamentDetail?.id as string, [...restrictions, restriction])
+        updateTournamentRestrictions(_get().tournamentDetail?._id as string, [...restrictions, restriction])
           .then(res => {
             set({
               tournamentDetail: res.data,
@@ -139,7 +155,7 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
     },
     deleteRestriction: (restriction: IRestriction) => {
       const restrictions = _get().tournamentDetail?.restrictions.filter(r => r.startTime !== restriction.startTime)
-      updateTournamentRestrictions(_get().tournamentDetail?.id as string, restrictions as IRestriction[])
+      updateTournamentRestrictions(_get().tournamentDetail?._id as string, restrictions as IRestriction[])
         .then(res => {
           set({
             tournamentDetail: res.data
@@ -148,6 +164,36 @@ export const useTournamentsStore = create<TournamentsState>((set, _get) => {
         })
         .catch(_ => {
           toast.error('Error al eliminar la restricción')
+        })
+    },
+    downloadNamesList: (tournamentId: string) => {
+      downloadNamesList(tournamentId)
+        .then(res => {
+          const url = window.URL.createObjectURL(new Blob([res.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'listado.pdf')
+          document.body.appendChild(link)
+          link.click()
+          link.parentNode?.removeChild(link)
+        })
+        .catch(_ => {
+          toast.error('Error al descargar el listado')
+        })
+    },
+    downloadRestrictionsList: (tournamentId: string) => {
+      downloadRestrictionsList(tournamentId)
+        .then(res => {
+          const url = window.URL.createObjectURL(new Blob([res.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'categories.zip')
+          document.body.appendChild(link)
+          link.click()
+          link.parentNode?.removeChild(link)
+        })
+        .catch(_ => {
+          toast.error('Error al descargar las restricciones')
         })
     }
   }

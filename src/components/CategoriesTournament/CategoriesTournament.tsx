@@ -137,7 +137,7 @@ export const CategoriesTournament = ({ categories }: Props) => {
   }
 
   const getCategoriesParentNameById = (id: string, placeholder: string) => {
-    const category = categoriesParent.find((categoryParent) => categoryParent.id === id)
+    const category = categoriesParent.find((categoryParent) => categoryParent._id === id)
     return category?.name || placeholder
   }
 

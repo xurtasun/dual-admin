@@ -94,6 +94,7 @@ export const CategoryPage = ({ isTablet, isMobile }: Props) => {
     setEnableInput(false)
   }
   const handleEditModeCategory = (categoryId: string | undefined) => {
+    console.log('handleEditModeCategory', categoryId)
     setCategoriesParent(categoryId)
   }
 
@@ -131,11 +132,11 @@ export const CategoryPage = ({ isTablet, isMobile }: Props) => {
           <div className='categories-list' style={styles.categoriesList}>
             {categoriesParent.map((category) => {
               return (
-                <form key={category.id} onSubmit={(e: React.FormEvent) => handleUpdateCategory(e, category.id)}>
+                <form key={category._id} onSubmit={(e: React.FormEvent) => handleUpdateCategory(e, category._id)}>
                   <Input placeholder='Nombre Categoria' name='category' defaultValue={category.name} disabled={!category.enabled}>
                     {
                     !category.enabled
-                      ? <EditIcon styles={{ color: 'gold' }} onClick={() => handleEditModeCategory(category.id)} />
+                      ? <EditIcon styles={{ color: 'gold' }} onClick={() => handleEditModeCategory(category._id)} />
                       : <SaveIcon />
                   }
                   </Input>

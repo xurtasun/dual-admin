@@ -112,7 +112,7 @@ export const PlayersPage = ({ isTablet, isMobile }: Props) => {
             <div className='players' style={styles.players}>
               {
                 players?.map((player) => (
-                  <Player key={player.id} player={player} handleDetailPlayer={handleDetailPlayer} />
+                  <Player key={player._id} player={player} handleDetailPlayer={handleDetailPlayer} />
                 ))
               }
             </div>

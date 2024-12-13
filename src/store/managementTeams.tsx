@@ -22,12 +22,13 @@ interface ManagementTeamsState {
   setTournamentId: (tournamentId: string) => void
   setCategoryId: (categoryId: string) => void
   setTeamToManage: (team: ITeam | null) => void
-  updateTeamPayment: (playerId: string, teamId: string, payment: boolean) => void
+  updateTeamPayment: (playerId: string, teamId: string | undefined, payment: boolean) => void
   updateTeam: (team: ITeam) => void
   updateTeamRestrictions: (restrictions: IRestriction[]) => void
   getTeamsByTournamentAndCategory: () => void
   getNumbers: () => void
   deleteTeam: (teamId: string) => () => void
+  setPlayersSearched: (players: IPlayer[]) => void
 
 }
 export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) => {
@@ -43,6 +44,9 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
     playersPayedNumber: 0,
     playersPendingNumber: 0,
     playersTeamIdToUpdate: [],
+    setPlayersSearched: (players: IPlayer[]) => {
+      set({ playersSearched: players })
+    },
     setTournamentId: (tournamentId: string) => {
       set({ tournamentId })
     },
@@ -65,7 +69,6 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
         })
     },
     searchPlayers: (value: string) => {
-      console.log('Searching players ', value)
       const searchFilter = {
         $and: value.split(' ').map((word: string) => ({
           $or: [
@@ -99,8 +102,8 @@ export const useManagementTeamsStore = create<ManagementTeamsState>((set, _get) 
           toast.error('Error al actualizar las restricciones')
         })
     },
-    updateTeamPayment: (playerId: string, teamId: string, payment: boolean) => {
-      updateTeamPayment(playerId, teamId)
+    updateTeamPayment: (playerId: string, teamId: string | undefined, payment: boolean) => {
+      teamId && updateTeamPayment(playerId, teamId)
         .then((_) => {
           toast.success('Pago ' + (payment ? 'registrado' : 'eliminado'))
           _get().getTeamsByTournamentAndCategory()

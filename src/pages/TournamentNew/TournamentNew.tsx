@@ -260,7 +260,7 @@ export const TournamentNew = ({ isTablet, isMobile }: Props) => {
         <Navbar />
         <div className='tournament-content' style={styles.content}>
           <div className='tournamentDetail-container' style={styles.container_detail}>
-            <form onSubmit={handleSaveTournament} style={{ marginBottom: 9 }}>
+            <form onSubmit={handleSaveTournament} style={{ marginBottom: 9, display: 'flex', gap: 10, flexDirection: 'column' }}>
               <div className='tournament-info' style={styles.info}>
                 {
                   imageFile

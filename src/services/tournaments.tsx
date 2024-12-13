@@ -29,3 +29,19 @@ export const updateTournamentPublicTimetable = async (tournamentId: string, publ
   // return await authApi.get('/teams/sizes/' + tournamentId)
   return await authApi.put('/tournaments/' + tournamentId, { publicTimetable })
 }
+
+export const updateTournamentPublic = async (tournamentId: string, publicTournament: boolean) => {
+  return await authApi.put('/tournaments/' + tournamentId, { public: publicTournament })
+}
+
+export const downloadNamesList = async (tournamentId: string) => {
+  return await authApi.get('/tournaments/pdf/' + tournamentId + '/names', {
+    responseType: 'blob'
+  })
+}
+
+export const downloadRestrictionsList = async (tournamentId: string) => {
+  return await authApi.get('/tournaments/pdf/' + tournamentId + '/restrictions', {
+    responseType: 'blob'
+  })
+}

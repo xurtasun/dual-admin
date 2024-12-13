@@ -53,7 +53,7 @@ export const useAddTournament = create<AddTournamentState>((set, get) => {
           const tournament = data
           console.log(tournament)
           toast.success('Torneo creado correctamente')
-          uploadTournamentPoster(tournament.id, get().imageFile)
+          uploadTournamentPoster(tournament._id, get().imageFile)
             .then(_ => {
               toast.success('Imagen subida correctamente')
             })

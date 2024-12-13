@@ -58,9 +58,9 @@ export const PlayerDetail = ({ player }: Props) => {
   const [playerIdToImport, setPlayerIdToImport] = useState<string | null>(null)
 
   useEffect(() => {
-    getScoringByPlayerId(player.id)
-    getTeamsByPlayerId(player.id)
-  }, [getScoringByPlayerId, player.id, getTeamsByPlayerId])
+    getScoringByPlayerId(player._id)
+    getTeamsByPlayerId(player._id)
+  }, [getScoringByPlayerId, player._id, getTeamsByPlayerId])
 
   const handleSubmitClick = (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,7 +70,7 @@ export const PlayerDetail = ({ player }: Props) => {
     const phone = formData.get('phone') as string
     const email = formData.get('email') as string
     const size = playerDetailForm.size
-    updatePlayer(player.id, { phone, email, size })
+    updatePlayer(player._id, { phone, email, size })
     setPlayerDetailEditMode(false)
   }
 
@@ -116,7 +116,7 @@ export const PlayerDetail = ({ player }: Props) => {
     if (playerIdToImport) {
       setPlayerIdToImport(null)
       setOpenImportDialog(false)
-      importPlayer(player.id, playerIdToImport, dataToImport)
+      importPlayer(player._id, playerIdToImport, dataToImport)
     }
   }
 
@@ -135,7 +135,7 @@ export const PlayerDetail = ({ player }: Props) => {
           <Avatar {...stringAvatar({ name: `${player.name} ${player.lastName}`, size: AVATAR_SIZE })} />
           <div className='flex-column' style={styles.flex_column}>
             {isAdmin
-              ? <Tooltip title={player.id} placement='top'>
+              ? <Tooltip title={player._id} placement='top'>
                 <span style={styles.topName}>{player.name} {player.lastName}</span>
               </Tooltip>
               : <span style={styles.topName}>{player.name} {player.lastName}</span>}

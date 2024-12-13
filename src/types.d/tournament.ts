@@ -25,6 +25,7 @@ export interface ITournament {
   publicTimetable: boolean
   updated: Date
   enabled: boolean
+  public: boolean
   sets: number
   scoring: {
     [key: string]: {

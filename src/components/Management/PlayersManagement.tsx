@@ -92,8 +92,9 @@ export const PlayersManagement = ({ tournamentId, categoryId, categories }: Prop
     }
   }
 
-  const handleDeleteConfirmation = (teamId: string) => {
+  const handleDeleteConfirmation = (teamId?: string) => {
     return () => {
+      teamId &&
       deleteTeam(teamId)()
       setDeleteConfirmationDialog(false)
     }
