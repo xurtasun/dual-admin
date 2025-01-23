@@ -11,3 +11,7 @@ export const signUp = async ({ email, password, firstName, lastName }: { email: 
 export const getMe = async () => {
   return await authApi.get('/customers/me')
 }
+
+export const logout = async () => {
+  return await authApi.get('/auth/logout')
+}

@@ -3,9 +3,8 @@ import { persist } from 'zustand/middleware'
 
 import { type IClient } from '../types.d/client'
 
-import { login, getMe, signUp } from '../services/auth'
+import { login, getMe, signUp, logout } from '../services/auth'
 import { toast } from '../components/Sonner'
-import { useCookies } from '../hooks/cookie'
 
 interface ClientState {
   profile: IClient | null
@@ -21,7 +20,6 @@ interface ClientState {
 }
 
 export const useAuthStore = create(persist<ClientState>((set, _get) => {
-  const { remove } = useCookies()
   return {
     profile: null,
     isAuth: false,
@@ -58,7 +56,7 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
       return await new Promise((_resolve, reject) => {
         getMe()
           .then(({ data }) => {
-            set({ profile: data, isAdmin: data.role === 'admin' })
+            set({ profile: data, isAdmin: data.role === 'admin', isAuth: true })
           })
           .catch((err) => {
             set({ isAuth: false, profile: null })
@@ -67,8 +65,10 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
       })
     },
     logout: () => {
-      remove('admin_access_token')
-      set({ isAuth: false, profile: null })
+      logout()
+        .then(() => {
+          set({ isAuth: false, profile: null })
+        })
     }
   }
 }, { name: 'auth' }))

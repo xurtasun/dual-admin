@@ -9,6 +9,7 @@ export const ProtectedRoute = ({
   isAllowed,
   redirectTo = '/login'
 }: Props) => {
+  console.log('isAllowed', isAllowed, 'redirectTo', redirectTo)
   if (!isAllowed) return <Navigate to={redirectTo} />
   return <Outlet />
 }

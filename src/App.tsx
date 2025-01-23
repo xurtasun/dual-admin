@@ -19,32 +19,31 @@ import { TournamentDetail } from './pages/TournamentDetail/TournamentDetail'
 import { TournamentNew } from './pages/TournamentNew/TournamentNew'
 import { TournamentManagement } from './pages/TournamentManagement/TournamentManagement'
 import { ContactPage } from './pages/ContactPage/ContactPage'
-import { useCookies } from './hooks/cookie'
 
 function App () {
-  // const client = useClientStore(state => state.client)
   const isAuth = useAuthStore(state => state.isAuth)
-  const setIsAuth = useAuthStore(state => state.setIsAuth)
-  // const getMe = useAuthStore(state => state.getMe)
-  const { get } = useCookies()
-  const [authChecking, setAuthChecking] = useState(true)
+  const getMe = useAuthStore(state => state.getMe)
+  const [validationAuth, setValidationAuth] = useState(true)
+
   useEffect(() => {
     console.log('isMobile', isMobile, 'isTablet', isTablet)
   }, [])
-  // useEffect(() => {
-  //   if (!isAuth && accessToken) {
-  //     getMe()
-  //       .catch(err => console.log(err))
-  //   }
-  // })
   useEffect(() => {
-    const accessToken = get('admin_access_token')
-    if (accessToken) {
-      setIsAuth(true)
+    const unauthenticatedRoutes = [
+      '/login',
+      '/suscription'
+    ]
+    console.log(window.location.pathname)
+    if (!isAuth && !unauthenticatedRoutes.includes(window.location.pathname)) {
+      console.log('getMe')
+      getMe()
+        .catch(err => console.log(err))
+      console.log('getMe finished')
     }
-    setAuthChecking(false)
-  }, [get, setIsAuth])
-  if (authChecking) {
+    setValidationAuth(false)
+  }, [getMe, isAuth])
+
+  if (validationAuth) {
     return <div>Loading...</div>
   }
   return (
