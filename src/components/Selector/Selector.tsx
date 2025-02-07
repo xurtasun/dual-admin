@@ -47,7 +47,7 @@ export const Selector = ({ options, styles, onChange, value, getValueFromId, pla
         {
           options?.map((option) => {
             return (
-              <MenuItem value={option.id} key={option.id}>{option.name}</MenuItem>
+              <MenuItem value={option.id} key={option._id}>{option.name}</MenuItem>
             )
           })
         }

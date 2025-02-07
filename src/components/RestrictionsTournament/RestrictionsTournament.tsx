@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { IRestriction } from '../../types.d/restriction'
 import { AddButton } from '../AddButton/AddButton'
 import { CalendarIcon } from '../Icons/CalendarIcon'
@@ -19,6 +19,7 @@ import { SaveIcon } from '../Icons/SaveIcon'
 import dayjs from 'dayjs'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { CloseIcon } from '../Icons/CloseIcon'
+import { ITournament } from '../../types.d/tournament'
 
 interface Styles {
   header: React.CSSProperties
@@ -35,6 +36,7 @@ interface Styles {
 }
 interface Props {
   restrictions: IRestriction[]
+  tournament: ITournament
 }
 const styles: Styles = {
   container: {
@@ -114,7 +116,7 @@ const styles: Styles = {
   }
 }
 
-export const RestrictionsTournament = ({ restrictions }: Props) => {
+export const RestrictionsTournament = ({ restrictions, tournament }: Props) => {
   const dateOptions: any = {
     weekday: 'long',
     year: 'numeric',
@@ -126,8 +128,8 @@ export const RestrictionsTournament = ({ restrictions }: Props) => {
     minute: '2-digit'
   }
   const newRestrictionOptions: IRestriction = {
-    startTime: new Date(),
-    endTime: new Date(),
+    startTime: new Date(tournament.date[0]),
+    endTime: new Date(tournament.date[0]),
     blocked: false
   }
 
@@ -207,9 +209,6 @@ export const RestrictionsTournament = ({ restrictions }: Props) => {
     }
   }
 
-  useEffect(() => {
-    console.log('newRestriction', newRestriction)
-  }, [restrictions, newRestriction])
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
 

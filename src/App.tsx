@@ -33,7 +33,6 @@ function App () {
       '/login',
       '/suscription'
     ]
-    console.log(window.location.pathname)
     if (!isAuth && !unauthenticatedRoutes.includes(window.location.pathname)) {
       console.log('getMe')
       getMe()

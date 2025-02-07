@@ -266,7 +266,7 @@ export const TournamentDetail = ({ isTablet, isMobile }: Props) => {
               <CategoriesTournament categories={tournamentCategories} />
             </GrayContainer>
             <GrayContainer style={{ margin: '18px 0' }}>
-              <RestrictionsTournament restrictions={tournament.restrictions} />
+              <RestrictionsTournament restrictions={tournament.restrictions} tournament={tournament} />
             </GrayContainer>
           </div>
         </div>
