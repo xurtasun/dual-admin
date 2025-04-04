@@ -21,7 +21,7 @@ interface Props {
   match: IMatch
   setMatch: (match: { match: IMatch | null }) => void
   refreshData: () => void
-  matchTypes: Array<{ id: string, name: string }>
+  matchTypes: Array<{ _id: string, name: string }>
   matchPositions?: number[]
   finalMatches?: IMatch[]
 }
@@ -165,8 +165,8 @@ export const AddMatchContainer = ({ finalMatches, match, setMatch, refreshData, 
     }
   }
   const getMatchTypeName = (id: string, placeholder: string) => {
-    const matchType = matchTypes.find((type) => type.id === id)
-    setMatchLastType(matchType?.id || 'Group')
+    const matchType = matchTypes.find((type) => type._id === id)
+    setMatchLastType(matchType?._id || 'Group')
     return matchType?.name || placeholder
   }
   const getPositionName = (id: string, placeholder: string) => {
@@ -294,14 +294,14 @@ export const AddMatchContainer = ({ finalMatches, match, setMatch, refreshData, 
       </div>
       <div className='form' style={styles.form}>
         <div className='flexRow' style={styles.flexRow}>
-          <Selector disabled={match.type !== 'Group'} options={groups.map((group) => { return ({ id: group._id, name: group.name }) })} value={match.groupId} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={(e) => setMatch({ match: { ...match, groupId: e.target.value } })} getValueFromId={getGroupNameFromId} />
-          <Selector options={tournament?.date.map((dat) => { return ({ id: dat, name: new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }) }) })} value={match.datetime} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={handleDateChange} getValueFromId={getDateNameFromValue} />
+          <Selector disabled={match.type !== 'Group'} options={groups.map((group) => { return ({ _id: group._id, name: group.name }) })} value={match.groupId} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={(e) => setMatch({ match: { ...match, groupId: e.target.value } })} getValueFromId={getGroupNameFromId} />
+          <Selector options={tournament?.date.map((dat) => { return ({ _id: dat, name: new Date(dat).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit' }) }) })} value={match.datetime} styles={match.type !== 'Group' ? styles.selector : { ...styles.selector, width: 162 }} placeholder='Grupo' onChange={handleDateChange} getValueFromId={getDateNameFromValue} />
         </div>
         <div className='flexRow' style={styles.flexRow}>
           <Input placeholder='Pista' errorMessage={matchFormErrors.courtName?.message} styles={matchFormErrors.courtName ? { ...styles.input, ...RED_BORDER_VALIDATOR } : styles.input} type='string' onChange={handleCourtNameChange} value={match.courtName} />
           <Input placeholder='Hora' styles={{ ...styles.input, width: 70 }} type='time' step='900' onChange={handleTimeChange} value={new Date(match.datetime).toLocaleTimeString('es-ES', localTimeStringOptions)} />
           {matchTypes && <Selector options={matchTypes} value={match.type} styles={{ ...styles.selector, width: 140 }} placeholder='Tipo' onChange={(e) => setMatch({ match: { ...match, type: e.target.value } })} getValueFromId={getMatchTypeName} />}
-          {matchPositions && match.type !== 'Group' && <Selector options={matchPositions.map((position) => { return ({ id: position, name: position.toString() }) })} value={match.position} styles={{ ...styles.selector, width: 95 }} placeholder='Pos' onChange={(e) => setMatch({ match: { ...match, position: Number(e.target.value) } })} getValueFromId={getPositionName} />}
+          {matchPositions && match.type !== 'Group' && <Selector options={matchPositions.map((position) => { return ({ _id: position, name: position.toString() }) })} value={match.position} styles={{ ...styles.selector, width: 95 }} placeholder='Pos' onChange={(e) => setMatch({ match: { ...match, position: Number(e.target.value) } })} getValueFromId={getPositionName} />}
 
         </div>
         <div className='flexColumn' style={styles.flexColumn}>

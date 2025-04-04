@@ -64,8 +64,9 @@ export const usePlayersStore = create<PlayerState>((set, _get) => {
       set({ updateTeamPlayers: players })
     },
     deletePlayer: () => {
-      const { id } = _get().playerDetail as IPlayer
-      deletePlayer(id)
+      const { _id } = _get().playerDetail as IPlayer
+      console.log(_get().playerDetail)
+      deletePlayer(_id)
         .then(() => {
           set({ playerDetail: null })
           _get().getPlayers({ page: _get().playersPage, filter: _get().playerFilter })

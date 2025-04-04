@@ -163,7 +163,7 @@ export const TeamDetailContainer = ({ team, setTeamToManage, deleteTeam, categor
 
       {editMode &&
         <div className='category-container' style={{ marginTop: 20 }}>
-          <Selector value={team.category._id} styles={{ width: 160 }} onChange={handleOnChangeCategory} getValueFromId={getCategoryNameById} options={categories.map((category) => { return ({ id: category._id, name: category.parent?.name }) })} placeholder='Categoria' />
+          <Selector value={team.category._id} styles={{ width: 160 }} onChange={handleOnChangeCategory} getValueFromId={getCategoryNameById} options={categories.map((category) => { return ({ _id: category._id, name: category.parent?.name }) })} placeholder='Categoria' />
         </div>}
       <GrayContainer style={{ marginTop: 20 }}>
         <RestrictionsTeam restrictions={team.restrictions} updateRestrictions={handleUpdateRestrictions} />

@@ -32,7 +32,14 @@ export const useAuthStore = create(persist<ClientState>((set, _get) => {
     login: async ({ email, password }: { email: string, password: string }) => {
       login({ email, password })
         .then((_) => {
-          set({ isAuth: true })
+          getMe()
+            .then(({ data }) => {
+              set({ profile: data, isAdmin: data.role === 'admin', isAuth: true })
+            })
+            .catch((err) => {
+              set({ isAuth: false, profile: null })
+              toast.error(err.response.data.error)
+            })
         })
         .catch((err) => {
           set({ isAuth: false, profile: null })

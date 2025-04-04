@@ -34,10 +34,8 @@ function App () {
       '/suscription'
     ]
     if (!isAuth && !unauthenticatedRoutes.includes(window.location.pathname)) {
-      console.log('getMe')
       getMe()
         .catch(err => console.log(err))
-      console.log('getMe finished')
     }
     setValidationAuth(false)
   }, [getMe, isAuth])
